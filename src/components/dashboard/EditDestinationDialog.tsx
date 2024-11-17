@@ -27,7 +27,9 @@ export const EditDestinationDialog = ({ destination }: { destination: any }) => 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await updateDestination(destination.id, formData);
+      // Create a new object without the name_search field
+      const { name_search, ...updateData } = formData;
+      await updateDestination(destination.id, updateData);
       toast.success("Destination updated successfully");
     } catch (error) {
       toast.error("Failed to update destination");
