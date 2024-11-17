@@ -9,22 +9,14 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { useNavigate } from "react-router-dom";
+import { EditDestinationDialog } from "./EditDestinationDialog";
+import { EditRecommendationDialog } from "./EditRecommendationDialog";
 
 const Header = () => {
   const [open, setOpen] = useState(false);
   const { destinations, recommendations } = useData();
-  const navigate = useNavigate();
-
-  const handleSearch = (value: string) => {
-    if (value === "destination") {
-      setOpen(false);
-      navigate("/destinations");
-    } else if (value === "recommendation") {
-      setOpen(false);
-      navigate("/recommendations");
-    }
-  };
+  const [selectedDestination, setSelectedDestination] = useState<any>(null);
+  const [selectedRecommendation, setSelectedRecommendation] = useState<any>(null);
 
   return (
     <header className="glass-panel flex h-16 items-center px-6">
@@ -50,7 +42,7 @@ const Header = () => {
                 value={`destination-${destination.id}`}
                 onSelect={() => {
                   setOpen(false);
-                  navigate(`/destinations/${destination.id}`);
+                  setSelectedDestination(destination);
                 }}
               >
                 {destination.name}
@@ -64,7 +56,7 @@ const Header = () => {
                 value={`recommendation-${recommendation.id}`}
                 onSelect={() => {
                   setOpen(false);
-                  navigate(`/recommendations/${recommendation.id}`);
+                  setSelectedRecommendation(recommendation);
                 }}
               >
                 {recommendation.name}
@@ -73,6 +65,20 @@ const Header = () => {
           </CommandGroup>
         </CommandList>
       </CommandDialog>
+
+      {selectedDestination && (
+        <EditDestinationDialog
+          destination={selectedDestination}
+          onClose={() => setSelectedDestination(null)}
+        />
+      )}
+      
+      {selectedRecommendation && (
+        <EditRecommendationDialog
+          recommendation={selectedRecommendation}
+          onClose={() => setSelectedRecommendation(null)}
+        />
+      )}
     </header>
   );
 };
