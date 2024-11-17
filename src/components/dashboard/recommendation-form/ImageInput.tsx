@@ -1,5 +1,6 @@
 import { FormSection } from "./FormSection";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 
 interface ImageInputProps {
   mainImage: string;
@@ -22,11 +23,10 @@ export const ImageInput = ({
   return (
     <div className="space-y-4">
       <FormSection title="Main Image URL">
-        <input
-          type="text"
+        <Input
           value={mainImage}
           onChange={(e) => onMainImageChange(e.target.value)}
-          className="w-full rounded-md bg-white/5 border-white/10 focus:border-dashboard-accent/50 transition-colors"
+          className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
           placeholder="Enter main image URL"
         />
       </FormSection>
@@ -34,7 +34,7 @@ export const ImageInput = ({
         <Textarea
           value={additionalImages.join('\n')}
           onChange={handleImagesChange}
-          className="min-h-[100px] bg-white/5 border-white/10 focus:border-dashboard-accent/50 transition-colors"
+          className="min-h-[100px] bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
           placeholder="Enter image URLs, one per line"
         />
         <div className="mt-2 grid grid-cols-2 gap-2">
