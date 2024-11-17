@@ -14,6 +14,8 @@ import LoadingCard from "./LoadingCard";
 import { EditDestinationDialog } from "./EditDestinationDialog";
 import { EditRecommendationDialog } from "./EditRecommendationDialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 const ContentGrid = () => {
   const {
@@ -30,6 +32,57 @@ const ContentGrid = () => {
     refreshData();
   }, []);
 
+  const handleAddNew = async (type: "destination" | "recommendation") => {
+    try {
+      const defaultData = type === "destination" 
+        ? {
+            name: "New Destination",
+            country: "Unknown",
+            description: "",
+            image: "",
+            region: "Other",
+          }
+        : {
+            name: "New Recommendation",
+            type: "Restaurant",
+            cuisine: "",
+            rating: 0,
+            price_level: "$$",
+            description: "",
+            image: "",
+            destination_id: destinations[0]?.id, // Default to first destination
+          };
+
+      const { data, error } = await supabase
+        .from(type === "destination" ? "destinations" : "recommendations")
+        .insert(defaultData)
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      toast.success(`New ${type} created successfully`);
+      refreshData();
+    } catch (error) {
+      console.error(`Error creating ${type}:`, error);
+      toast.error(`Failed to create ${type}`);
+    }
+  };
+
+  const handleDelete = async (type: "destination" | "recommendation", id: string) => {
+    try {
+      if (type === "destination") {
+        await deleteDestination(id);
+      } else {
+        await deleteRecommendation(id);
+      }
+      toast.success(`${type} deleted successfully`);
+    } catch (error) {
+      console.error(`Error deleting ${type}:`, error);
+      toast.error(`Failed to delete ${type}`);
+    }
+  };
+
   if (loading) {
     return (
       <div className="grid gap-4 p-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -43,8 +96,11 @@ const ContentGrid = () => {
   return (
     <div className="p-6">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Content Management</h1>
-        <Button className="bg-dashboard-accent hover:bg-dashboard-accent/90">
+        <h1 className="text-2xl font-bold">Flavr Admin</h1>
+        <Button 
+          className="bg-dashboard-accent hover:bg-dashboard-accent/90"
+          onClick={() => handleAddNew(activeTab === "destinations" ? "destination" : "recommendation")}
+        >
           <Plus className="mr-2 h-4 w-4" />
           Add New
         </Button>
@@ -78,7 +134,7 @@ const ContentGrid = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => deleteDestination(dest.id)}
+                        onClick={() => handleDelete("destination", dest.id)}
                         className="opacity-0 transition-opacity group-hover:opacity-100"
                       >
                         <Trash2 className="h-4 w-4 text-red-500" />
@@ -121,7 +177,7 @@ const ContentGrid = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => deleteRecommendation(rec.id)}
+                        onClick={() => handleDelete("recommendation", rec.id)}
                         className="opacity-0 transition-opacity group-hover:opacity-100"
                       >
                         <Trash2 className="h-4 w-4 text-red-500" />
