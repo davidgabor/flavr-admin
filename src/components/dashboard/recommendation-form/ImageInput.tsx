@@ -36,6 +36,8 @@ export const ImageInput = ({
           onChange={handleImagesChange}
           className="min-h-[100px] bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
           placeholder="Enter image URLs, one per line"
+          rows={5}
+          wrap="soft"
         />
         <div className="mt-2 grid grid-cols-2 gap-2">
           {additionalImages.map((url, index) => (
