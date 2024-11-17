@@ -27,7 +27,7 @@ export const DestinationCard = ({ destination, onDelete }: DestinationCardProps)
         </div>
       )}
       <CardHeader className="relative">
-        <CardTitle className="flex items-center justify-between font-judson">
+        <CardTitle className="flex items-center justify-between font-judson text-white">
           <span className="line-clamp-1">{destination.name}</span>
           <div className="flex gap-2">
             <EditDestinationDialog destination={destination} />

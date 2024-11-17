@@ -27,7 +27,7 @@ export const RecommendationCard = ({ recommendation, onDelete }: RecommendationC
         </div>
       )}
       <CardHeader className="relative">
-        <CardTitle className="flex items-center justify-between font-judson">
+        <CardTitle className="flex items-center justify-between font-judson text-white">
           <span className="line-clamp-1">{recommendation.name}</span>
           <div className="flex gap-2">
             <EditRecommendationDialog recommendation={recommendation} />
