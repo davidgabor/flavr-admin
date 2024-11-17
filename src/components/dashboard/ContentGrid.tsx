@@ -16,6 +16,7 @@ import { EditRecommendationDialog } from "./EditRecommendationDialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const ContentGrid = () => {
   const {
