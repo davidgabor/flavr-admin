@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useData } from "@/contexts/DataContext";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,9 +11,18 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoadingCard from "./LoadingCard";
+import { EditDestinationDialog } from "./EditDestinationDialog";
+import { EditRecommendationDialog } from "./EditRecommendationDialog";
 
 const ContentGrid = () => {
-  const { destinations, recommendations, loading, refreshData, deleteDestination, deleteRecommendation } = useData();
+  const {
+    destinations,
+    recommendations,
+    loading,
+    refreshData,
+    deleteDestination,
+    deleteRecommendation,
+  } = useData();
   const [activeTab, setActiveTab] = useState("destinations");
 
   useEffect(() => {
@@ -54,9 +63,7 @@ const ContentGrid = () => {
                   <CardTitle className="flex items-center justify-between">
                     {dest.name}
                     <div className="flex gap-2">
-                      <Button variant="ghost" size="icon">
-                        <Edit className="h-4 w-4" />
-                      </Button>
+                      <EditDestinationDialog destination={dest} />
                       <Button
                         variant="ghost"
                         size="icon"
@@ -88,9 +95,7 @@ const ContentGrid = () => {
                   <CardTitle className="flex items-center justify-between">
                     {rec.name}
                     <div className="flex gap-2">
-                      <Button variant="ghost" size="icon">
-                        <Edit className="h-4 w-4" />
-                      </Button>
+                      <EditRecommendationDialog recommendation={rec} />
                       <Button
                         variant="ghost"
                         size="icon"

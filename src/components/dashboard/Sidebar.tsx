@@ -1,4 +1,4 @@
-import { Home, Settings, Files, Menu } from "lucide-react";
+import { Map, Utensils, Menu } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -6,9 +6,8 @@ const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   const menuItems = [
-    { icon: Home, label: "Dashboard", href: "/" },
-    { icon: Files, label: "Content", href: "/content" },
-    { icon: Settings, label: "Settings", href: "/settings" },
+    { icon: Map, label: "Destinations", href: "/destinations" },
+    { icon: Utensils, label: "Recommendations", href: "/recommendations" },
   ];
 
   return (

@@ -9,6 +9,8 @@ type DataContextType = {
   refreshData: () => Promise<void>;
   deleteDestination: (id: string) => Promise<void>;
   deleteRecommendation: (id: string) => Promise<void>;
+  updateDestination: (id: string, data: any) => Promise<void>;
+  updateRecommendation: (id: string, data: any) => Promise<void>;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -22,7 +24,6 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       
-      // Fetch destinations
       const { data: destData, error: destError } = await supabase
         .from("destinations")
         .select("*");
@@ -33,7 +34,6 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // Fetch recommendations
       const { data: recsData, error: recsError } = await supabase
         .from("recommendations")
         .select("*");
@@ -86,6 +86,36 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateDestination = async (id: string, data: any) => {
+    try {
+      const { error } = await supabase
+        .from("destinations")
+        .update(data)
+        .eq("id", id);
+
+      if (error) throw error;
+      refreshData();
+    } catch (error) {
+      console.error("Error updating destination:", error);
+      throw error;
+    }
+  };
+
+  const updateRecommendation = async (id: string, data: any) => {
+    try {
+      const { error } = await supabase
+        .from("recommendations")
+        .update(data)
+        .eq("id", id);
+
+      if (error) throw error;
+      refreshData();
+    } catch (error) {
+      console.error("Error updating recommendation:", error);
+      throw error;
+    }
+  };
+
   return (
     <DataContext.Provider
       value={{
@@ -95,6 +125,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         refreshData,
         deleteDestination,
         deleteRecommendation,
+        updateDestination,
+        updateRecommendation,
       }}
     >
       {children}
