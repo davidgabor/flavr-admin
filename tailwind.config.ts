@@ -30,7 +30,7 @@ export default {
         dashboard: {
           background: "#0F0F0F",
           card: "#1A1A1A",
-          accent: "#8B5CF6",
+          accent: "#F97316",
           muted: "#A1A1AA",
         },
         primary: {

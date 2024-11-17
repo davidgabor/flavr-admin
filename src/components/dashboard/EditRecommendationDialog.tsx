@@ -28,7 +28,6 @@ export const EditRecommendationDialog = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Create a new object without the name_search field
       const { name_search, ...updateData } = formData;
       await updateRecommendation(recommendation.id, updateData);
       toast.success("Recommendation updated successfully");
