@@ -14,9 +14,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 
+interface DestinationFormData {
+  name: string;
+  country: string;
+  description: string;
+  image: string;
+  region: string;
+  name_search?: any;
+}
+
 export const EditDestinationDialog = ({ destination }: { destination: any }) => {
   const { updateDestination } = useData();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<DestinationFormData>({
     name: destination.name,
     country: destination.country,
     description: destination.description,
@@ -27,7 +36,6 @@ export const EditDestinationDialog = ({ destination }: { destination: any }) => 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Create a new object without the name_search field
       const { name_search, ...updateData } = formData;
       await updateDestination(destination.id, updateData);
       toast.success("Destination updated successfully");
