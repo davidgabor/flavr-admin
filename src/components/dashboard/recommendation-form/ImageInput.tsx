@@ -20,6 +20,12 @@ export const ImageInput = ({
     onAdditionalImagesChange(imageUrls);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter') {
+      e.stopPropagation(); // Prevent the default form submission
+    }
+  };
+
   return (
     <div className="space-y-4">
       <FormSection title="Main Image URL">
@@ -34,6 +40,7 @@ export const ImageInput = ({
         <Textarea
           value={additionalImages.join('\n')}
           onChange={handleImagesChange}
+          onKeyDown={handleKeyDown}
           className="min-h-[100px] bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
           placeholder="Enter image URLs, one per line"
           rows={5}
