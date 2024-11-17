@@ -4,10 +4,10 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoadingCard from "./LoadingCard";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { DestinationCard } from "./cards/DestinationCard";
 import { RecommendationCard } from "./cards/RecommendationCard";
+import { EditDestinationDialog } from "./EditDestinationDialog";
+import { EditRecommendationDialog } from "./EditRecommendationDialog";
 
 const ContentGrid = () => {
   const {
@@ -19,53 +19,18 @@ const ContentGrid = () => {
     deleteRecommendation,
   } = useData();
   const [activeTab, setActiveTab] = useState("destinations");
+  const [showNewDialog, setShowNewDialog] = useState(false);
 
   useEffect(() => {
     refreshData();
   }, []);
 
-  const handleAddNew = async (type: "destination" | "recommendation") => {
-    try {
-      if (!destinations.length && type === "recommendation") {
-        toast.error("Please create a destination first");
-        return;
-      }
-
-      const defaultData = type === "destination" 
-        ? {
-            id: crypto.randomUUID(),
-            name: "New Destination",
-            country: "Unknown",
-            description: "",
-            image: "",
-            region: "Other",
-          }
-        : {
-            id: crypto.randomUUID(),
-            name: "New Recommendation",
-            type: "Restaurant",
-            cuisine: "",
-            rating: 0,
-            price_level: "$$",
-            description: "",
-            image: "",
-            destination_id: destinations[0]?.id,
-          };
-
-      const { data, error } = await supabase
-        .from(type === "destination" ? "destinations" : "recommendations")
-        .insert(defaultData)
-        .select()
-        .single();
-
-      if (error) throw error;
-      
-      toast.success(`New ${type} created successfully`);
-      refreshData();
-    } catch (error) {
-      console.error(`Error creating ${type}:`, error);
-      toast.error(`Failed to create ${type}`);
+  const handleAddNew = () => {
+    if (activeTab === "recommendations" && !destinations.length) {
+      toast.error("Please create a destination first");
+      return;
     }
+    setShowNewDialog(true);
   };
 
   const handleDelete = async (type: "destination" | "recommendation", id: string) => {
@@ -80,6 +45,27 @@ const ContentGrid = () => {
       console.error(`Error deleting ${type}:`, error);
       toast.error(`Failed to delete ${type}`);
     }
+  };
+
+  const defaultNewDestination = {
+    id: crypto.randomUUID(),
+    name: "",
+    country: "",
+    description: "",
+    image: "",
+    region: "Other",
+  };
+
+  const defaultNewRecommendation = {
+    id: crypto.randomUUID(),
+    name: "",
+    type: "Restaurant",
+    cuisine: "",
+    rating: 0,
+    price_level: "$$",
+    description: "",
+    image: "",
+    destination_id: destinations[0]?.id,
   };
 
   if (loading) {
@@ -98,7 +84,7 @@ const ContentGrid = () => {
         <h1 className="text-3xl font-judson font-bold">Flavr Admin</h1>
         <Button 
           className="bg-dashboard-accent hover:bg-dashboard-accent/90"
-          onClick={() => handleAddNew(activeTab === "destinations" ? "destination" : "recommendation")}
+          onClick={handleAddNew}
         >
           <Plus className="mr-2 h-4 w-4" />
           Add New
@@ -135,6 +121,22 @@ const ContentGrid = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      {showNewDialog && activeTab === "destinations" && (
+        <EditDestinationDialog
+          destination={defaultNewDestination}
+          isNew={true}
+          onClose={() => setShowNewDialog(false)}
+        />
+      )}
+
+      {showNewDialog && activeTab === "recommendations" && (
+        <EditRecommendationDialog
+          recommendation={defaultNewRecommendation}
+          isNew={true}
+          onClose={() => setShowNewDialog(false)}
+        />
+      )}
     </div>
   );
 };

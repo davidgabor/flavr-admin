@@ -5,7 +5,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
@@ -16,6 +15,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { BasicInfoFields } from "./recommendation-form/BasicInfoFields";
 import { ImageInput } from "./recommendation-form/ImageInput";
 import { FormSection } from "./recommendation-form/FormSection";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Select,
   SelectContent,
@@ -24,22 +24,42 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+interface EditRecommendationDialogProps {
+  recommendation: any;
+  isNew?: boolean;
+  onClose?: () => void;
+}
+
 export const EditRecommendationDialog = ({
   recommendation,
-}: {
-  recommendation: any;
-}) => {
-  const { updateRecommendation, destinations } = useData();
+  isNew,
+  onClose,
+}: EditRecommendationDialogProps) => {
+  const { updateRecommendation, destinations, refreshData } = useData();
+  const [open, setOpen] = useState(isNew);
   const [formData, setFormData] = useState(recommendation);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const { name_search, ...updateData } = formData;
-      await updateRecommendation(recommendation.id, updateData);
-      toast.success("Recommendation updated successfully");
+
+      if (isNew) {
+        const { error } = await supabase
+          .from("recommendations")
+          .insert({ id: recommendation.id, ...updateData });
+        
+        if (error) throw error;
+        toast.success("Recommendation created successfully");
+      } else {
+        await updateRecommendation(recommendation.id, updateData);
+        toast.success("Recommendation updated successfully");
+      }
+      
+      refreshData();
+      handleClose();
     } catch (error) {
-      toast.error("Failed to update recommendation");
+      toast.error(isNew ? "Failed to create recommendation" : "Failed to update recommendation");
     }
   };
 
@@ -47,16 +67,23 @@ export const EditRecommendationDialog = ({
     setFormData({ ...formData, [field]: value });
   };
 
+  const handleClose = () => {
+    setOpen(false);
+    onClose?.();
+  };
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="opacity-0 transition-opacity group-hover:opacity-100">
+    <Dialog open={open} onOpenChange={setOpen}>
+      {!isNew && (
+        <Button variant="ghost" size="icon" className="opacity-0 transition-opacity group-hover:opacity-100" onClick={() => setOpen(true)}>
           <Edit className="h-4 w-4" />
         </Button>
-      </DialogTrigger>
+      )}
       <DialogContent className="bg-dashboard-background border-dashboard-accent/20 text-white">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">Edit Recommendation</DialogTitle>
+          <DialogTitle className="text-xl font-semibold">
+            {isNew ? "Create Recommendation" : "Edit Recommendation"}
+          </DialogTitle>
         </DialogHeader>
         <ScrollArea className="h-[600px] pr-4">
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -156,7 +183,7 @@ export const EditRecommendationDialog = ({
             </FormSection>
 
             <Button type="submit" className="w-full bg-dashboard-accent hover:bg-dashboard-accent/90 transition-colors">
-              Update Recommendation
+              {isNew ? "Create Recommendation" : "Update Recommendation"}
             </Button>
           </form>
         </ScrollArea>

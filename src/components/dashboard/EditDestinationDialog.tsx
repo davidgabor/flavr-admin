@@ -5,7 +5,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
@@ -13,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
 
 interface DestinationFormData {
   name: string;
@@ -23,8 +23,15 @@ interface DestinationFormData {
   name_search?: any;
 }
 
-export const EditDestinationDialog = ({ destination }: { destination: any }) => {
-  const { updateDestination } = useData();
+interface EditDestinationDialogProps {
+  destination: any;
+  isNew?: boolean;
+  onClose?: () => void;
+}
+
+export const EditDestinationDialog = ({ destination, isNew, onClose }: EditDestinationDialogProps) => {
+  const { updateDestination, refreshData } = useData();
+  const [open, setOpen] = useState(isNew);
   const [formData, setFormData] = useState<DestinationFormData>({
     name: destination.name,
     country: destination.country,
@@ -37,23 +44,43 @@ export const EditDestinationDialog = ({ destination }: { destination: any }) => 
     e.preventDefault();
     try {
       const { name_search, ...updateData } = formData;
-      await updateDestination(destination.id, updateData);
-      toast.success("Destination updated successfully");
+      
+      if (isNew) {
+        const { error } = await supabase
+          .from("destinations")
+          .insert({ id: destination.id, ...updateData });
+        
+        if (error) throw error;
+        toast.success("Destination created successfully");
+      } else {
+        await updateDestination(destination.id, updateData);
+        toast.success("Destination updated successfully");
+      }
+      
+      refreshData();
+      handleClose();
     } catch (error) {
-      toast.error("Failed to update destination");
+      toast.error(isNew ? "Failed to create destination" : "Failed to update destination");
     }
   };
 
+  const handleClose = () => {
+    setOpen(false);
+    onClose?.();
+  };
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="opacity-0 transition-opacity group-hover:opacity-100">
+    <Dialog open={open} onOpenChange={setOpen}>
+      {!isNew && (
+        <Button variant="ghost" size="icon" className="opacity-0 transition-opacity group-hover:opacity-100" onClick={() => setOpen(true)}>
           <Edit className="h-4 w-4" />
         </Button>
-      </DialogTrigger>
+      )}
       <DialogContent className="bg-dashboard-background border-dashboard-accent/20 text-white">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">Edit Destination</DialogTitle>
+          <DialogTitle className="text-xl font-semibold">
+            {isNew ? "Create Destination" : "Edit Destination"}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="mt-4 space-y-6">
           <div className="space-y-2">
@@ -102,7 +129,7 @@ export const EditDestinationDialog = ({ destination }: { destination: any }) => 
             />
           </div>
           <Button type="submit" className="w-full bg-dashboard-accent hover:bg-dashboard-accent/90 transition-colors">
-            Update Destination
+            {isNew ? "Create Destination" : "Update Destination"}
           </Button>
         </form>
       </DialogContent>
