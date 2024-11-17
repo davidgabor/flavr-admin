@@ -28,6 +28,7 @@ const ContentGrid = () => {
     try {
       const defaultData = type === "destination" 
         ? {
+            id: crypto.randomUUID(),
             name: "New Destination",
             country: "Unknown",
             description: "",
@@ -35,6 +36,7 @@ const ContentGrid = () => {
             region: "Other",
           }
         : {
+            id: crypto.randomUUID(),
             name: "New Recommendation",
             type: "Restaurant",
             cuisine: "",
