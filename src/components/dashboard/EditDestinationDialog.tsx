@@ -41,7 +41,7 @@ export const EditDestinationDialog = ({ destination }: { destination: any }) => 
           <Edit className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="glass-panel border-dashboard-accent/20 text-white">
+      <DialogContent className="bg-dashboard-background border-dashboard-accent/20 text-white">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">Edit Destination</DialogTitle>
         </DialogHeader>
@@ -52,7 +52,7 @@ export const EditDestinationDialog = ({ destination }: { destination: any }) => 
               placeholder="Name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="bg-white/5 border-white/10 focus:border-dashboard-accent/50 transition-colors"
+              className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
             />
           </div>
           <div className="space-y-2">
@@ -61,7 +61,7 @@ export const EditDestinationDialog = ({ destination }: { destination: any }) => 
               placeholder="Country"
               value={formData.country}
               onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-              className="bg-white/5 border-white/10 focus:border-dashboard-accent/50 transition-colors"
+              className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
             />
           </div>
           <div className="space-y-2">
@@ -70,7 +70,7 @@ export const EditDestinationDialog = ({ destination }: { destination: any }) => 
               placeholder="Region"
               value={formData.region}
               onChange={(e) => setFormData({ ...formData, region: e.target.value })}
-              className="bg-white/5 border-white/10 focus:border-dashboard-accent/50 transition-colors"
+              className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
             />
           </div>
           <div className="space-y-2">
@@ -79,7 +79,7 @@ export const EditDestinationDialog = ({ destination }: { destination: any }) => 
               placeholder="Image URL"
               value={formData.image}
               onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-              className="bg-white/5 border-white/10 focus:border-dashboard-accent/50 transition-colors"
+              className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
             />
           </div>
           <div className="space-y-2">
@@ -88,7 +88,7 @@ export const EditDestinationDialog = ({ destination }: { destination: any }) => 
               placeholder="Description"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="bg-white/5 border-white/10 focus:border-dashboard-accent/50 min-h-[100px] transition-colors"
+              className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 min-h-[100px] transition-colors"
             />
           </div>
           <Button type="submit" className="w-full bg-dashboard-accent hover:bg-dashboard-accent/90 transition-colors">

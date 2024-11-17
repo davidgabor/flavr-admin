@@ -46,7 +46,7 @@ export const EditRecommendationDialog = ({
           <Edit className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="glass-panel max-w-2xl border-dashboard-accent/20 text-white">
+      <DialogContent className="bg-dashboard-background border-dashboard-accent/20 text-white">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">Edit Recommendation</DialogTitle>
         </DialogHeader>
@@ -58,7 +58,7 @@ export const EditRecommendationDialog = ({
               <Textarea
                 value={formData.description || ""}
                 onChange={(e) => handleFieldChange("description", e.target.value)}
-                className="bg-white/5 border-white/10 focus:border-dashboard-accent/50 transition-colors"
+                className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
               />
             </FormSection>
 
@@ -69,14 +69,14 @@ export const EditRecommendationDialog = ({
                   step="0.1"
                   value={formData.rating}
                   onChange={(e) => handleFieldChange("rating", parseFloat(e.target.value))}
-                  className="bg-white/5 border-white/10 focus:border-dashboard-accent/50 transition-colors"
+                  className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
                 />
               </FormSection>
               <FormSection title="Neighborhood">
                 <Input
                   value={formData.neighborhood || ""}
                   onChange={(e) => handleFieldChange("neighborhood", e.target.value)}
-                  className="bg-white/5 border-white/10 focus:border-dashboard-accent/50 transition-colors"
+                  className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
                 />
               </FormSection>
             </div>
@@ -87,25 +87,25 @@ export const EditRecommendationDialog = ({
                   placeholder="Address"
                   value={formData.address || ""}
                   onChange={(e) => handleFieldChange("address", e.target.value)}
-                  className="bg-white/5 border-white/10 focus:border-dashboard-accent/50 transition-colors"
+                  className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
                 />
                 <Input
                   placeholder="Phone"
                   value={formData.phone || ""}
                   onChange={(e) => handleFieldChange("phone", e.target.value)}
-                  className="bg-white/5 border-white/10 focus:border-dashboard-accent/50 transition-colors"
+                  className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
                 />
                 <Input
                   placeholder="Website"
                   value={formData.website || ""}
                   onChange={(e) => handleFieldChange("website", e.target.value)}
-                  className="bg-white/5 border-white/10 focus:border-dashboard-accent/50 transition-colors"
+                  className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
                 />
                 <Input
                   placeholder="Instagram"
                   value={formData.instagram || ""}
                   onChange={(e) => handleFieldChange("instagram", e.target.value)}
-                  className="bg-white/5 border-white/10 focus:border-dashboard-accent/50 transition-colors"
+                  className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
                 />
               </div>
             </FormSection>
@@ -121,7 +121,7 @@ export const EditRecommendationDialog = ({
               <Textarea
                 value={formData.our_review || ""}
                 onChange={(e) => handleFieldChange("our_review", e.target.value)}
-                className="min-h-[100px] bg-white/5 border-white/10 focus:border-dashboard-accent/50 transition-colors"
+                className="min-h-[100px] bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
               />
             </FormSection>
 
