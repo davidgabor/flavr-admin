@@ -16,13 +16,20 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { BasicInfoFields } from "./recommendation-form/BasicInfoFields";
 import { ImageInput } from "./recommendation-form/ImageInput";
 import { FormSection } from "./recommendation-form/FormSection";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const EditRecommendationDialog = ({
   recommendation,
 }: {
   recommendation: any;
 }) => {
-  const { updateRecommendation } = useData();
+  const { updateRecommendation, destinations } = useData();
   const [formData, setFormData] = useState(recommendation);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -53,6 +60,28 @@ export const EditRecommendationDialog = ({
         </DialogHeader>
         <ScrollArea className="h-[600px] pr-4">
           <form onSubmit={handleSubmit} className="space-y-6">
+            <FormSection title="Destination">
+              <Select
+                value={formData.destination_id}
+                onValueChange={(value) => handleFieldChange("destination_id", value)}
+              >
+                <SelectTrigger className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors">
+                  <SelectValue placeholder="Select a destination" />
+                </SelectTrigger>
+                <SelectContent className="bg-dashboard-card border-dashboard-accent/20">
+                  {destinations.map((destination) => (
+                    <SelectItem
+                      key={destination.id}
+                      value={destination.id}
+                      className="text-white hover:bg-white/10"
+                    >
+                      {destination.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormSection>
+
             <BasicInfoFields formData={formData} onChange={handleFieldChange} />
             
             <FormSection title="Description">

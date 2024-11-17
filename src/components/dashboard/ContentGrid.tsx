@@ -26,6 +26,11 @@ const ContentGrid = () => {
 
   const handleAddNew = async (type: "destination" | "recommendation") => {
     try {
+      if (!destinations.length && type === "recommendation") {
+        toast.error("Please create a destination first");
+        return;
+      }
+
       const defaultData = type === "destination" 
         ? {
             id: crypto.randomUUID(),
