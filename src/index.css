@@ -35,7 +35,11 @@
   }
 
   .glass-panel {
-    @apply bg-dashboard-card bg-opacity-50 backdrop-blur-lg border border-white/5;
+    @apply bg-dashboard-card border border-white/5;
+  }
+
+  .font-judson {
+    font-family: 'Judson', serif;
   }
 }
 

@@ -16,21 +16,20 @@ interface RecommendationCardProps {
 
 export const RecommendationCard = ({ recommendation, onDelete }: RecommendationCardProps) => {
   return (
-    <Card className="group relative overflow-hidden bg-dashboard-card text-white transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10">
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/60" />
+    <Card className="group relative overflow-hidden bg-dashboard-card border-white/5 hover:border-dashboard-accent/50 transition-all duration-300">
       {recommendation.image && (
-        <div className="absolute inset-0 -z-10">
+        <div className="h-32 w-full overflow-hidden">
           <img
             src={recommendation.image}
             alt={recommendation.name}
-            className="h-full w-full object-cover opacity-30"
+            className="h-full w-full object-cover"
           />
         </div>
       )}
       <CardHeader className="relative">
-        <CardTitle className="flex items-center justify-between">
+        <CardTitle className="flex items-center justify-between font-judson">
           <span className="line-clamp-1">{recommendation.name}</span>
-          <div className="flex gap-2 z-10">
+          <div className="flex gap-2">
             <EditRecommendationDialog recommendation={recommendation} />
             <Button
               variant="ghost"

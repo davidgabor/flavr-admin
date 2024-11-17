@@ -88,7 +88,7 @@ const ContentGrid = () => {
   return (
     <div className="p-6">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Flavr Admin</h1>
+        <h1 className="text-3xl font-judson font-bold">Flavr Admin</h1>
         <Button 
           className="bg-dashboard-accent hover:bg-dashboard-accent/90"
           onClick={() => handleAddNew(activeTab === "destinations" ? "destination" : "recommendation")}
