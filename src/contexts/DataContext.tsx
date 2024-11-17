@@ -21,17 +21,33 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const refreshData = async () => {
     try {
       setLoading(true);
-      const [destResponse, recsResponse] = await Promise.all([
-        supabase.from("destinations").select("*"),
-        supabase.from("recommendations").select("*"),
-      ]);
+      
+      // Fetch destinations
+      const { data: destData, error: destError } = await supabase
+        .from("destinations")
+        .select("*");
 
-      if (destResponse.error) throw destResponse.error;
-      if (recsResponse.error) throw recsResponse.error;
+      if (destError) {
+        console.error("Error fetching destinations:", destError);
+        toast.error("Failed to fetch destinations");
+        return;
+      }
 
-      setDestinations(destResponse.data || []);
-      setRecommendations(recsResponse.data || []);
+      // Fetch recommendations
+      const { data: recsData, error: recsError } = await supabase
+        .from("recommendations")
+        .select("*");
+
+      if (recsError) {
+        console.error("Error fetching recommendations:", recsError);
+        toast.error("Failed to fetch recommendations");
+        return;
+      }
+
+      setDestinations(destData || []);
+      setRecommendations(recsData || []);
     } catch (error) {
+      console.error("Error in refreshData:", error);
       toast.error("Failed to fetch data");
     } finally {
       setLoading(false);
@@ -40,22 +56,32 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const deleteDestination = async (id: string) => {
     try {
-      const { error } = await supabase.from("destinations").delete().eq("id", id);
+      const { error } = await supabase
+        .from("destinations")
+        .delete()
+        .eq("id", id);
+
       if (error) throw error;
       toast.success("Destination deleted");
       refreshData();
     } catch (error) {
+      console.error("Error deleting destination:", error);
       toast.error("Failed to delete destination");
     }
   };
 
   const deleteRecommendation = async (id: string) => {
     try {
-      const { error } = await supabase.from("recommendations").delete().eq("id", id);
+      const { error } = await supabase
+        .from("recommendations")
+        .delete()
+        .eq("id", id);
+
       if (error) throw error;
       toast.success("Recommendation deleted");
       refreshData();
     } catch (error) {
+      console.error("Error deleting recommendation:", error);
       toast.error("Failed to delete recommendation");
     }
   };
