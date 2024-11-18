@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useData } from "@/contexts/DataContext";
 import {
   Dialog,
@@ -8,13 +8,12 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { BasicInfoFields } from "./recommendation-form/BasicInfoFields";
 import { ImageInput } from "./recommendation-form/ImageInput";
 import { FormSection } from "./recommendation-form/FormSection";
+import { ExpertsSelection } from "./recommendation-form/ExpertsSelection";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Select,
@@ -39,6 +38,23 @@ export const EditRecommendationDialog = ({
   const [open, setOpen] = useState(isNew);
   const [formData, setFormData] = useState(recommendation);
   const [selectedExperts, setSelectedExperts] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchExistingExperts = async () => {
+      if (!isNew) {
+        const { data: expertRecs, error } = await supabase
+          .from("expert_recommendations")
+          .select("expert_id")
+          .eq("recommendation_id", recommendation.id);
+
+        if (!error && expertRecs) {
+          setSelectedExperts(expertRecs.map(er => er.expert_id));
+        }
+      }
+    };
+
+    fetchExistingExperts();
+  }, [isNew, recommendation.id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,6 +128,15 @@ export const EditRecommendationDialog = ({
     onClose?.();
   };
 
+  const handleExpertSelect = (expertId: string) => {
+    setSelectedExperts(prev => {
+      if (prev.includes(expertId)) {
+        return prev.filter(id => id !== expertId);
+      }
+      return [...prev, expertId];
+    });
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {!isNew && (
@@ -149,27 +174,11 @@ export const EditRecommendationDialog = ({
               </Select>
             </FormSection>
 
-            <FormSection title="Experts">
-              <Select
-                value={selectedExperts[0] || ""}
-                onValueChange={(value) => setSelectedExperts([value])}
-              >
-                <SelectTrigger className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors">
-                  <SelectValue placeholder="Select an expert" />
-                </SelectTrigger>
-                <SelectContent className="bg-dashboard-card border-dashboard-accent/20">
-                  {experts.map((expert) => (
-                    <SelectItem
-                      key={expert.id}
-                      value={expert.id}
-                      className="text-white hover:bg-white/10"
-                    >
-                      {expert.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormSection>
+            <ExpertsSelection
+              experts={experts}
+              selectedExperts={selectedExperts}
+              onExpertSelect={handleExpertSelect}
+            />
 
             <BasicInfoFields formData={formData} onChange={handleFieldChange} />
             
