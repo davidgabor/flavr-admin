@@ -70,7 +70,7 @@ export const EditExpertDialog = ({ expert, isNew, onClose }: EditExpertDialogPro
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {!isNew && (
-        <Button variant="ghost" size="icon" className="opacity-0 transition-opacity group-hover:opacity-100" onClick={() => setOpen(true)}>
+        <Button variant="ghost" size="icon" className="opacity-0 transition-opacity group-hover:opacity-100 text-white hover:bg-white/10" onClick={() => setOpen(true)}>
           <Edit className="h-4 w-4" />
         </Button>
       )}
