@@ -28,7 +28,7 @@ interface EditExpertDialogProps {
 
 export const EditExpertDialog = ({ expert, isNew, onClose }: EditExpertDialogProps) => {
   const { refreshData } = useData();
-  const [open, setOpen] = useState(isNew);
+  const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<ExpertFormData>({
     name: expert?.name || "",
     bio: expert?.bio || "",
@@ -66,6 +66,11 @@ export const EditExpertDialog = ({ expert, isNew, onClose }: EditExpertDialogPro
     setOpen(false);
     onClose?.();
   };
+
+  // Set initial open state when isNew changes
+  useEffect(() => {
+    setOpen(isNew || false);
+  }, [isNew]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
