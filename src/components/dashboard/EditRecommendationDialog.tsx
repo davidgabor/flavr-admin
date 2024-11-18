@@ -35,9 +35,10 @@ export const EditRecommendationDialog = ({
   isNew,
   onClose,
 }: EditRecommendationDialogProps) => {
-  const { updateRecommendation, destinations, refreshData } = useData();
+  const { updateRecommendation, destinations, experts, refreshData } = useData();
   const [open, setOpen] = useState(isNew);
   const [formData, setFormData] = useState(recommendation);
+  const [selectedExperts, setSelectedExperts] = useState<string[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,14 +46,53 @@ export const EditRecommendationDialog = ({
       const { name_search, ...updateData } = formData;
 
       if (isNew) {
-        const { error } = await supabase
+        const { data: newRec, error: recError } = await supabase
           .from("recommendations")
-          .insert({ id: recommendation.id, ...updateData });
+          .insert({ id: recommendation.id, ...updateData })
+          .select()
+          .single();
         
-        if (error) throw error;
+        if (recError) throw recError;
+
+        // Insert expert recommendations
+        if (selectedExperts.length > 0) {
+          const expertRecommendations = selectedExperts.map(expertId => ({
+            expert_id: expertId,
+            recommendation_id: recommendation.id
+          }));
+
+          const { error: expertsError } = await supabase
+            .from("expert_recommendations")
+            .insert(expertRecommendations);
+
+          if (expertsError) throw expertsError;
+        }
+
         toast.success("Recommendation created successfully");
       } else {
         await updateRecommendation(recommendation.id, updateData);
+        
+        // Update expert recommendations
+        const { error: deleteError } = await supabase
+          .from("expert_recommendations")
+          .delete()
+          .eq("recommendation_id", recommendation.id);
+
+        if (deleteError) throw deleteError;
+
+        if (selectedExperts.length > 0) {
+          const expertRecommendations = selectedExperts.map(expertId => ({
+            expert_id: expertId,
+            recommendation_id: recommendation.id
+          }));
+
+          const { error: expertsError } = await supabase
+            .from("expert_recommendations")
+            .insert(expertRecommendations);
+
+          if (expertsError) throw expertsError;
+        }
+
         toast.success("Recommendation updated successfully");
       }
       
@@ -103,6 +143,28 @@ export const EditRecommendationDialog = ({
                       className="text-white hover:bg-white/10"
                     >
                       {destination.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormSection>
+
+            <FormSection title="Experts">
+              <Select
+                value={selectedExperts[0] || ""}
+                onValueChange={(value) => setSelectedExperts([value])}
+              >
+                <SelectTrigger className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors">
+                  <SelectValue placeholder="Select an expert" />
+                </SelectTrigger>
+                <SelectContent className="bg-dashboard-card border-dashboard-accent/20">
+                  {experts.map((expert) => (
+                    <SelectItem
+                      key={expert.id}
+                      value={expert.id}
+                      className="text-white hover:bg-white/10"
+                    >
+                      {expert.name}
                     </SelectItem>
                   ))}
                 </SelectContent>

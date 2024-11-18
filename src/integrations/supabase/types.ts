@@ -39,6 +39,66 @@ export type Database = {
         }
         Relationships: []
       }
+      expert_recommendations: {
+        Row: {
+          created_at: string
+          expert_id: string
+          recommendation_id: string
+        }
+        Insert: {
+          created_at?: string
+          expert_id: string
+          recommendation_id: string
+        }
+        Update: {
+          created_at?: string
+          expert_id?: string
+          recommendation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_recommendations_expert_id_fkey"
+            columns: ["expert_id"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_recommendations_recommendation_id_fkey"
+            columns: ["recommendation_id"]
+            isOneToOne: false
+            referencedRelation: "recommendations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experts: {
+        Row: {
+          bio: string | null
+          created_at: string
+          id: string
+          image: string | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          id: string
+          image?: string | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          id?: string
+          image?: string | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       recommendations: {
         Row: {
           address: string | null
