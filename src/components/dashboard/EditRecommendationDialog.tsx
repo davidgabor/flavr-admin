@@ -15,6 +15,8 @@ import { ImageInput } from "./recommendation-form/ImageInput";
 import { FormSection } from "./recommendation-form/FormSection";
 import { ExpertsSelection } from "./recommendation-form/ExpertsSelection";
 import { supabase } from "@/integrations/supabase/client";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
