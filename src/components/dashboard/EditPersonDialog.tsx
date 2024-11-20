@@ -14,25 +14,25 @@ import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 
-interface ExpertFormData {
+interface PersonFormData {
   name: string;
   bio?: string;
   image?: string;
 }
 
-interface EditExpertDialogProps {
-  expert?: any;
+interface EditPersonDialogProps {
+  person?: any;
   isNew?: boolean;
   onClose?: () => void;
 }
 
-export const EditExpertDialog = ({ expert, isNew, onClose }: EditExpertDialogProps) => {
+export const EditPersonDialog = ({ person, isNew, onClose }: EditPersonDialogProps) => {
   const { refreshData } = useData();
   const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState<ExpertFormData>({
-    name: expert?.name || "",
-    bio: expert?.bio || "",
-    image: expert?.image || "",
+  const [formData, setFormData] = useState<PersonFormData>({
+    name: person?.name || "",
+    bio: person?.bio || "",
+    image: person?.image || "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,25 +40,25 @@ export const EditExpertDialog = ({ expert, isNew, onClose }: EditExpertDialogPro
     try {
       if (isNew) {
         const { error } = await supabase
-          .from("experts")
+          .from("people")
           .insert({ id: crypto.randomUUID(), ...formData });
         
         if (error) throw error;
-        toast.success("Expert created successfully");
+        toast.success("Person created successfully");
       } else {
         const { error } = await supabase
-          .from("experts")
+          .from("people")
           .update(formData)
-          .eq("id", expert.id);
+          .eq("id", person.id);
         
         if (error) throw error;
-        toast.success("Expert updated successfully");
+        toast.success("Person updated successfully");
       }
       
       refreshData();
       handleClose();
     } catch (error) {
-      toast.error(isNew ? "Failed to create expert" : "Failed to update expert");
+      toast.error(isNew ? "Failed to create person" : "Failed to update person");
     }
   };
 
@@ -67,7 +67,6 @@ export const EditExpertDialog = ({ expert, isNew, onClose }: EditExpertDialogPro
     onClose?.();
   };
 
-  // Set initial open state when isNew changes
   useEffect(() => {
     setOpen(isNew || false);
   }, [isNew]);
@@ -82,7 +81,7 @@ export const EditExpertDialog = ({ expert, isNew, onClose }: EditExpertDialogPro
       <DialogContent className="bg-dashboard-background border-dashboard-accent/20 text-white">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
-            {isNew ? "Create Expert" : "Edit Expert"}
+            {isNew ? "Create Person" : "Edit Person"}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="mt-4 space-y-6">
@@ -114,7 +113,7 @@ export const EditExpertDialog = ({ expert, isNew, onClose }: EditExpertDialogPro
             />
           </div>
           <Button type="submit" className="w-full bg-dashboard-accent hover:bg-dashboard-accent/90 transition-colors">
-            {isNew ? "Create Expert" : "Update Expert"}
+            {isNew ? "Create Person" : "Update Person"}
           </Button>
         </form>
       </DialogContent>

@@ -10,42 +10,42 @@ import {
 import { X } from "lucide-react";
 import { FormSection } from "./FormSection";
 
-interface Expert {
+interface Person {
   id: string;
   name: string;
 }
 
-interface ExpertsSelectionProps {
-  experts: Expert[];
-  selectedExperts: string[];
-  onExpertSelect: (expertId: string) => void;
+interface PeopleSelectionProps {
+  people: Person[];
+  selectedPeople: string[];
+  onPersonSelect: (personId: string) => void;
 }
 
-export const ExpertsSelection = ({
-  experts,
-  selectedExperts,
-  onExpertSelect,
-}: ExpertsSelectionProps) => {
-  const getExpertName = (expertId: string) => {
-    return experts.find(e => e.id === expertId)?.name || 'Unknown Expert';
+export const PeopleSelection = ({
+  people,
+  selectedPeople,
+  onPersonSelect,
+}: PeopleSelectionProps) => {
+  const getPersonName = (personId: string) => {
+    return people.find(p => p.id === personId)?.name || 'Unknown Person';
   };
 
   return (
-    <FormSection title="Experts">
+    <FormSection title="People">
       <div className="space-y-2">
         <div className="flex flex-wrap gap-2 mb-2">
-          {selectedExperts.map((expertId) => (
+          {selectedPeople.map((personId) => (
             <Badge 
-              key={expertId}
+              key={personId}
               variant="secondary"
               className="bg-dashboard-card/50 text-white"
             >
-              {getExpertName(expertId)}
+              {getPersonName(personId)}
               <Button
                 variant="ghost"
                 size="sm"
                 className="h-4 w-4 p-0 ml-1 hover:bg-transparent"
-                onClick={() => onExpertSelect(expertId)}
+                onClick={() => onPersonSelect(personId)}
               >
                 <X className="h-3 w-3" />
               </Button>
@@ -54,21 +54,21 @@ export const ExpertsSelection = ({
         </div>
         <Select
           value=""
-          onValueChange={onExpertSelect}
+          onValueChange={onPersonSelect}
         >
           <SelectTrigger className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors">
-            <SelectValue placeholder="Add an expert" />
+            <SelectValue placeholder="Add a person" />
           </SelectTrigger>
           <SelectContent className="bg-dashboard-card border-dashboard-accent/20">
-            {experts
-              .filter(expert => !selectedExperts.includes(expert.id))
-              .map((expert) => (
+            {people
+              .filter(person => !selectedPeople.includes(person.id))
+              .map((person) => (
                 <SelectItem
-                  key={expert.id}
-                  value={expert.id}
+                  key={person.id}
+                  value={person.id}
                   className="text-white hover:bg-white/10"
                 >
-                  {expert.name}
+                  {person.name}
                 </SelectItem>
               ))}
           </SelectContent>
