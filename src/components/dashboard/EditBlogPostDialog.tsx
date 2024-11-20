@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { RichTextEditor } from "./blog-form/RichTextEditor";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface BlogPostFormData {
   title: string;
@@ -97,71 +98,73 @@ export const EditBlogPostDialog = ({ post, isNew, onClose }: EditBlogPostDialogP
             {isNew ? "Create Blog Post" : "Edit Blog Post"}
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="mt-4 space-y-6">
-          <div className="grid grid-cols-2 gap-6">
+        <ScrollArea className="h-[80vh]">
+          <form onSubmit={handleSubmit} className="mt-4 space-y-6 pr-6">
+            <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-white">Title</Label>
+                <Input
+                  placeholder="Title"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-white">Slug</Label>
+                <Input
+                  placeholder="slug-for-url"
+                  value={formData.slug}
+                  onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                  className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-white">Title</Label>
-              <Input
-                placeholder="Title"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              <Label className="text-sm font-medium text-white">Content</Label>
+              <RichTextEditor
+                content={formData.content}
+                onChange={(content) => setFormData({ ...formData, content })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-white">Excerpt</Label>
+              <Textarea
+                placeholder="Excerpt"
+                value={formData.excerpt}
+                onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                 className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
               />
             </div>
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-white">Slug</Label>
-              <Input
-                placeholder="slug-for-url"
-                value={formData.slug}
-                onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
-              />
+
+            <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-white">Cover Image URL</Label>
+                <Input
+                  placeholder="Cover Image URL"
+                  value={formData.cover_image}
+                  onChange={(e) => setFormData({ ...formData, cover_image: e.target.value })}
+                  className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-white">Publish Date</Label>
+                <Input
+                  type="datetime-local"
+                  value={formData.published_at ? new Date(formData.published_at).toISOString().slice(0, 16) : ""}
+                  onChange={(e) => setFormData({ ...formData, published_at: e.target.value })}
+                  className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-white">Content</Label>
-            <RichTextEditor
-              content={formData.content}
-              onChange={(content) => setFormData({ ...formData, content })}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-white">Excerpt</Label>
-            <Textarea
-              placeholder="Excerpt"
-              value={formData.excerpt}
-              onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-              className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-white">Cover Image URL</Label>
-              <Input
-                placeholder="Cover Image URL"
-                value={formData.cover_image}
-                onChange={(e) => setFormData({ ...formData, cover_image: e.target.value })}
-                className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-white">Publish Date</Label>
-              <Input
-                type="datetime-local"
-                value={formData.published_at ? new Date(formData.published_at).toISOString().slice(0, 16) : ""}
-                onChange={(e) => setFormData({ ...formData, published_at: e.target.value })}
-                className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
-              />
-            </div>
-          </div>
-
-          <Button type="submit" className="w-full bg-dashboard-accent hover:bg-dashboard-accent/90 transition-colors">
-            {isNew ? "Create Blog Post" : "Update Blog Post"}
-          </Button>
-        </form>
+            <Button type="submit" className="w-full bg-dashboard-accent hover:bg-dashboard-accent/90 transition-colors">
+              {isNew ? "Create Blog Post" : "Update Blog Post"}
+            </Button>
+          </form>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
