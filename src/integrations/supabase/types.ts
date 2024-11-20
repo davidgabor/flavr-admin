@@ -39,40 +39,7 @@ export type Database = {
         }
         Relationships: []
       }
-      expert_recommendations: {
-        Row: {
-          created_at: string
-          expert_id: string
-          recommendation_id: string
-        }
-        Insert: {
-          created_at?: string
-          expert_id: string
-          recommendation_id: string
-        }
-        Update: {
-          created_at?: string
-          expert_id?: string
-          recommendation_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "expert_recommendations_expert_id_fkey"
-            columns: ["expert_id"]
-            isOneToOne: false
-            referencedRelation: "experts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "expert_recommendations_recommendation_id_fkey"
-            columns: ["recommendation_id"]
-            isOneToOne: false
-            referencedRelation: "recommendations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      experts: {
+      people: {
         Row: {
           bio: string | null
           created_at: string
@@ -98,6 +65,39 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      person_recommendations: {
+        Row: {
+          created_at: string
+          person_id: string
+          recommendation_id: string
+        }
+        Insert: {
+          created_at?: string
+          person_id: string
+          recommendation_id: string
+        }
+        Update: {
+          created_at?: string
+          person_id?: string
+          recommendation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_recommendations_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_recommendations_recommendation_id_fkey"
+            columns: ["recommendation_id"]
+            isOneToOne: false
+            referencedRelation: "recommendations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       recommendations: {
         Row: {

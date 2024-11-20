@@ -7,21 +7,21 @@ import { toast } from "sonner";
 import LoadingCard from "./LoadingCard";
 import { DestinationCard } from "./cards/DestinationCard";
 import { RecommendationCard } from "./cards/RecommendationCard";
-import { ExpertCard } from "./cards/ExpertCard";
+import { PersonCard } from "./cards/PersonCard";
 import { EditDestinationDialog } from "./EditDestinationDialog";
 import { EditRecommendationDialog } from "./EditRecommendationDialog";
-import { EditExpertDialog } from "./EditExpertDialog";
+import { EditPersonDialog } from "./EditPersonDialog";
 
 const ContentGrid = () => {
   const {
     destinations,
     recommendations,
-    experts,
+    people,
     loading,
     refreshData,
     deleteDestination,
     deleteRecommendation,
-    deleteExpert,
+    deletePerson,
   } = useData();
   const [activeTab, setActiveTab] = useState("destinations");
   const [showNewDialog, setShowNewDialog] = useState(false);
@@ -38,14 +38,14 @@ const ContentGrid = () => {
     setShowNewDialog(true);
   };
 
-  const handleDelete = async (type: "destination" | "recommendation" | "expert", id: string) => {
+  const handleDelete = async (type: "destination" | "recommendation" | "person", id: string) => {
     try {
       if (type === "destination") {
         await deleteDestination(id);
       } else if (type === "recommendation") {
         await deleteRecommendation(id);
       } else {
-        await deleteExpert(id);
+        await deletePerson(id);
       }
       toast.success(`${type} deleted successfully`);
     } catch (error) {
@@ -75,7 +75,7 @@ const ContentGrid = () => {
     destination_id: destinations[0]?.id,
   };
 
-  const defaultNewExpert = {
+  const defaultNewPerson = {
     name: "",
     bio: "",
     image: "",
@@ -108,7 +108,7 @@ const ContentGrid = () => {
         <TabsList className="bg-dashboard-card w-full justify-start">
           <TabsTrigger value="destinations">Destinations</TabsTrigger>
           <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
-          <TabsTrigger value="experts">Experts</TabsTrigger>
+          <TabsTrigger value="people">People</TabsTrigger>
         </TabsList>
 
         <TabsContent value="destinations" className="animate-fade-in">
@@ -135,13 +135,13 @@ const ContentGrid = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="experts" className="animate-fade-in">
+        <TabsContent value="people" className="animate-fade-in">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {experts.map((expert) => (
-              <ExpertCard
-                key={expert.id}
-                expert={expert}
-                onDelete={(id) => handleDelete("expert", id)}
+            {people.map((person) => (
+              <PersonCard
+                key={person.id}
+                person={person}
+                onDelete={(id) => handleDelete("person", id)}
               />
             ))}
           </div>
@@ -164,9 +164,9 @@ const ContentGrid = () => {
         />
       )}
 
-      {showNewDialog && activeTab === "experts" && (
-        <EditExpertDialog
-          expert={defaultNewExpert}
+      {showNewDialog && activeTab === "people" && (
+        <EditPersonDialog
+          person={defaultNewPerson}
           isNew={true}
           onClose={() => setShowNewDialog(false)}
         />

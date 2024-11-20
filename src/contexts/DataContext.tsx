@@ -5,12 +5,12 @@ import { toast } from "sonner";
 type DataContextType = {
   destinations: any[];
   recommendations: any[];
-  experts: any[];
+  people: any[];
   loading: boolean;
   refreshData: () => Promise<void>;
   deleteDestination: (id: string) => Promise<void>;
   deleteRecommendation: (id: string) => Promise<void>;
-  deleteExpert: (id: string) => Promise<void>;
+  deletePerson: (id: string) => Promise<void>;
   updateDestination: (id: string, data: any) => Promise<void>;
   updateRecommendation: (id: string, data: any) => Promise<void>;
 };
@@ -20,7 +20,7 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 export function DataProvider({ children }: { children: React.ReactNode }) {
   const [destinations, setDestinations] = useState<any[]>([]);
   const [recommendations, setRecommendations] = useState<any[]>([]);
-  const [experts, setExperts] = useState<any[]>([]);
+  const [people, setPeople] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const refreshData = async () => {
@@ -47,19 +47,19 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      const { data: expertsData, error: expertsError } = await supabase
-        .from("experts")
+      const { data: peopleData, error: peopleError } = await supabase
+        .from("people")
         .select("*");
 
-      if (expertsError) {
-        console.error("Error fetching experts:", expertsError);
-        toast.error("Failed to fetch experts");
+      if (peopleError) {
+        console.error("Error fetching people:", peopleError);
+        toast.error("Failed to fetch people");
         return;
       }
 
       setDestinations(destData || []);
       setRecommendations(recsData || []);
-      setExperts(expertsData || []);
+      setPeople(peopleData || []);
     } catch (error) {
       console.error("Error in refreshData:", error);
       toast.error("Failed to fetch data");
@@ -100,19 +100,19 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const deleteExpert = async (id: string) => {
+  const deletePerson = async (id: string) => {
     try {
       const { error } = await supabase
-        .from("experts")
+        .from("people")
         .delete()
         .eq("id", id);
 
       if (error) throw error;
-      toast.success("Expert deleted");
+      toast.success("Person deleted");
       refreshData();
     } catch (error) {
-      console.error("Error deleting expert:", error);
-      toast.error("Failed to delete expert");
+      console.error("Error deleting person:", error);
+      toast.error("Failed to delete person");
     }
   };
 
@@ -151,12 +151,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       value={{
         destinations,
         recommendations,
-        experts,
+        people,
         loading,
         refreshData,
         deleteDestination,
         deleteRecommendation,
-        deleteExpert,
+        deletePerson,
         updateDestination,
         updateRecommendation,
       }}

@@ -13,7 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { BasicInfoFields } from "./recommendation-form/BasicInfoFields";
 import { ImageInput } from "./recommendation-form/ImageInput";
 import { FormSection } from "./recommendation-form/FormSection";
-import { ExpertsSelection } from "./recommendation-form/ExpertsSelection";
+import { PeopleSelection } from "./recommendation-form/PeopleSelection";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -36,26 +36,26 @@ export const EditRecommendationDialog = ({
   isNew,
   onClose,
 }: EditRecommendationDialogProps) => {
-  const { updateRecommendation, destinations, experts, refreshData } = useData();
+  const { updateRecommendation, destinations, people, refreshData } = useData();
   const [open, setOpen] = useState(isNew);
   const [formData, setFormData] = useState(recommendation);
-  const [selectedExperts, setSelectedExperts] = useState<string[]>([]);
+  const [selectedPeople, setSelectedPeople] = useState<string[]>([]);
 
   useEffect(() => {
-    const fetchExistingExperts = async () => {
+    const fetchExistingPeople = async () => {
       if (!isNew) {
-        const { data: expertRecs, error } = await supabase
-          .from("expert_recommendations")
-          .select("expert_id")
+        const { data: personRecs, error } = await supabase
+          .from("person_recommendations")
+          .select("person_id")
           .eq("recommendation_id", recommendation.id);
 
-        if (!error && expertRecs) {
-          setSelectedExperts(expertRecs.map(er => er.expert_id));
+        if (!error && personRecs) {
+          setSelectedPeople(personRecs.map(pr => pr.person_id));
         }
       }
     };
 
-    fetchExistingExperts();
+    fetchExistingPeople();
   }, [isNew, recommendation.id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -72,43 +72,43 @@ export const EditRecommendationDialog = ({
         
         if (recError) throw recError;
 
-        // Insert expert recommendations
-        if (selectedExperts.length > 0) {
-          const expertRecommendations = selectedExperts.map(expertId => ({
-            expert_id: expertId,
+        // Insert person recommendations
+        if (selectedPeople.length > 0) {
+          const personRecommendations = selectedPeople.map(personId => ({
+            person_id: personId,
             recommendation_id: recommendation.id
           }));
 
-          const { error: expertsError } = await supabase
-            .from("expert_recommendations")
-            .insert(expertRecommendations);
+          const { error: peopleError } = await supabase
+            .from("person_recommendations")
+            .insert(personRecommendations);
 
-          if (expertsError) throw expertsError;
+          if (peopleError) throw peopleError;
         }
 
         toast.success("Recommendation created successfully");
       } else {
         await updateRecommendation(recommendation.id, updateData);
         
-        // Update expert recommendations
+        // Update person recommendations
         const { error: deleteError } = await supabase
-          .from("expert_recommendations")
+          .from("person_recommendations")
           .delete()
           .eq("recommendation_id", recommendation.id);
 
         if (deleteError) throw deleteError;
 
-        if (selectedExperts.length > 0) {
-          const expertRecommendations = selectedExperts.map(expertId => ({
-            expert_id: expertId,
+        if (selectedPeople.length > 0) {
+          const personRecommendations = selectedPeople.map(personId => ({
+            person_id: personId,
             recommendation_id: recommendation.id
           }));
 
-          const { error: expertsError } = await supabase
-            .from("expert_recommendations")
-            .insert(expertRecommendations);
+          const { error: peopleError } = await supabase
+            .from("person_recommendations")
+            .insert(personRecommendations);
 
-          if (expertsError) throw expertsError;
+          if (peopleError) throw peopleError;
         }
 
         toast.success("Recommendation updated successfully");
@@ -130,12 +130,12 @@ export const EditRecommendationDialog = ({
     onClose?.();
   };
 
-  const handleExpertSelect = (expertId: string) => {
-    setSelectedExperts(prev => {
-      if (prev.includes(expertId)) {
-        return prev.filter(id => id !== expertId);
+  const handlePersonSelect = (personId: string) => {
+    setSelectedPeople(prev => {
+      if (prev.includes(personId)) {
+        return prev.filter(id => id !== personId);
       }
-      return [...prev, expertId];
+      return [...prev, personId];
     });
   };
 
@@ -176,10 +176,10 @@ export const EditRecommendationDialog = ({
               </Select>
             </FormSection>
 
-            <ExpertsSelection
-              experts={experts}
-              selectedExperts={selectedExperts}
-              onExpertSelect={handleExpertSelect}
+            <PeopleSelection
+              people={people}
+              selectedPeople={selectedPeople}
+              onPersonSelect={handlePersonSelect}
             />
 
             <BasicInfoFields formData={formData} onChange={handleFieldChange} />
