@@ -8,20 +8,24 @@ import LoadingCard from "./LoadingCard";
 import { DestinationCard } from "./cards/DestinationCard";
 import { RecommendationCard } from "./cards/RecommendationCard";
 import { PersonCard } from "./cards/PersonCard";
+import { BlogPostCard } from "./cards/BlogPostCard";
 import { EditDestinationDialog } from "./EditDestinationDialog";
 import { EditRecommendationDialog } from "./EditRecommendationDialog";
 import { EditPersonDialog } from "./EditPersonDialog";
+import { EditBlogPostDialog } from "./EditBlogPostDialog";
 
 const ContentGrid = () => {
   const {
     destinations,
     recommendations,
     people,
+    blogPosts,
     loading,
     refreshData,
     deleteDestination,
     deleteRecommendation,
     deletePerson,
+    deleteBlogPost,
   } = useData();
   const [activeTab, setActiveTab] = useState("destinations");
   const [showNewDialog, setShowNewDialog] = useState(false);
@@ -38,14 +42,16 @@ const ContentGrid = () => {
     setShowNewDialog(true);
   };
 
-  const handleDelete = async (type: "destination" | "recommendation" | "person", id: string) => {
+  const handleDelete = async (type: "destination" | "recommendation" | "person" | "blog", id: string) => {
     try {
       if (type === "destination") {
         await deleteDestination(id);
       } else if (type === "recommendation") {
         await deleteRecommendation(id);
-      } else {
+      } else if (type === "person") {
         await deletePerson(id);
+      } else {
+        await deleteBlogPost(id);
       }
       toast.success(`${type} deleted successfully`);
     } catch (error) {
@@ -81,6 +87,13 @@ const ContentGrid = () => {
     image: "",
   };
 
+  const defaultNewBlogPost = {
+    id: crypto.randomUUID(),
+    title: "",
+    slug: "",
+    content: "",
+  };
+
   if (loading) {
     return (
       <div className="grid gap-4 p-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -109,6 +122,7 @@ const ContentGrid = () => {
           <TabsTrigger value="destinations">Destinations</TabsTrigger>
           <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
           <TabsTrigger value="people">People</TabsTrigger>
+          <TabsTrigger value="blog">Blog Posts</TabsTrigger>
         </TabsList>
 
         <TabsContent value="destinations" className="animate-fade-in">
@@ -146,6 +160,18 @@ const ContentGrid = () => {
             ))}
           </div>
         </TabsContent>
+
+        <TabsContent value="blog" className="animate-fade-in">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {blogPosts.map((post) => (
+              <BlogPostCard
+                key={post.id}
+                post={post}
+                onDelete={(id) => handleDelete("blog", id)}
+              />
+            ))}
+          </div>
+        </TabsContent>
       </Tabs>
 
       {showNewDialog && activeTab === "destinations" && (
@@ -167,6 +193,14 @@ const ContentGrid = () => {
       {showNewDialog && activeTab === "people" && (
         <EditPersonDialog
           person={defaultNewPerson}
+          isNew={true}
+          onClose={() => setShowNewDialog(false)}
+        />
+      )}
+
+      {showNewDialog && activeTab === "blog" && (
+        <EditBlogPostDialog
+          post={defaultNewBlogPost}
           isNew={true}
           onClose={() => setShowNewDialog(false)}
         />

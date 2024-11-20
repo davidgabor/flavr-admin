@@ -6,11 +6,13 @@ type DataContextType = {
   destinations: any[];
   recommendations: any[];
   people: any[];
+  blogPosts: any[];
   loading: boolean;
   refreshData: () => Promise<void>;
   deleteDestination: (id: string) => Promise<void>;
   deleteRecommendation: (id: string) => Promise<void>;
   deletePerson: (id: string) => Promise<void>;
+  deleteBlogPost: (id: string) => Promise<void>;
   updateDestination: (id: string, data: any) => Promise<void>;
   updateRecommendation: (id: string, data: any) => Promise<void>;
 };
@@ -21,6 +23,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [destinations, setDestinations] = useState<any[]>([]);
   const [recommendations, setRecommendations] = useState<any[]>([]);
   const [people, setPeople] = useState<any[]>([]);
+  const [blogPosts, setBlogPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const refreshData = async () => {
@@ -57,9 +60,21 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      const { data: blogData, error: blogError } = await supabase
+        .from("blog_posts")
+        .select("*")
+        .order('created_at', { ascending: false });
+
+      if (blogError) {
+        console.error("Error fetching blog posts:", blogError);
+        toast.error("Failed to fetch blog posts");
+        return;
+      }
+
       setDestinations(destData || []);
       setRecommendations(recsData || []);
       setPeople(peopleData || []);
+      setBlogPosts(blogData || []);
     } catch (error) {
       console.error("Error in refreshData:", error);
       toast.error("Failed to fetch data");
@@ -116,6 +131,22 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const deleteBlogPost = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from("blog_posts")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+      toast.success("Blog post deleted");
+      refreshData();
+    } catch (error) {
+      console.error("Error deleting blog post:", error);
+      toast.error("Failed to delete blog post");
+    }
+  };
+
   const updateDestination = async (id: string, data: any) => {
     try {
       const { error } = await supabase
@@ -152,11 +183,13 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         destinations,
         recommendations,
         people,
+        blogPosts,
         loading,
         refreshData,
         deleteDestination,
         deleteRecommendation,
         deletePerson,
+        deleteBlogPost,
         updateDestination,
         updateRecommendation,
       }}
