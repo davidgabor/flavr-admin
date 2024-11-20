@@ -9,6 +9,108 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      blog_post_destinations: {
+        Row: {
+          blog_post_id: string
+          created_at: string
+          destination_id: string
+        }
+        Insert: {
+          blog_post_id: string
+          created_at?: string
+          destination_id: string
+        }
+        Update: {
+          blog_post_id?: string
+          created_at?: string
+          destination_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_post_destinations_blog_post_id_fkey"
+            columns: ["blog_post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_post_destinations_destination_id_fkey"
+            columns: ["destination_id"]
+            isOneToOne: false
+            referencedRelation: "destinations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      blog_post_recommendations: {
+        Row: {
+          blog_post_id: string
+          created_at: string
+          recommendation_id: string
+        }
+        Insert: {
+          blog_post_id: string
+          created_at?: string
+          recommendation_id: string
+        }
+        Update: {
+          blog_post_id?: string
+          created_at?: string
+          recommendation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_post_recommendations_blog_post_id_fkey"
+            columns: ["blog_post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blog_post_recommendations_recommendation_id_fkey"
+            columns: ["recommendation_id"]
+            isOneToOne: false
+            referencedRelation: "recommendations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      blog_posts: {
+        Row: {
+          content: string
+          cover_image: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          published_at: string | null
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          cover_image?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          published_at?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          cover_image?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          published_at?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       destinations: {
         Row: {
           country: string
