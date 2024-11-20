@@ -46,11 +46,24 @@ export const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
       .chain()
       .focus()
       .insertContent(`
-        <div class="recommendation-card p-4 my-4 bg-gray-100 rounded-lg">
-          <h3 class="font-bold">${recommendation.name}</h3>
-          <p class="text-sm text-gray-600">${recommendation.type} • ${recommendation.price_level} • Rating: ${recommendation.rating}</p>
-          ${recommendation.description ? `<p class="mt-2">${recommendation.description}</p>` : ''}
-        </div>
+        <a href="#recommendation-${recommendation.id}" class="block no-underline">
+          <div class="recommendation-card my-4 p-4 rounded-lg border border-dashboard-accent/20 bg-dashboard-card hover:border-dashboard-accent/50 transition-colors">
+            <div class="flex gap-4">
+              ${recommendation.image ? `
+                <div class="w-24 h-24 flex-shrink-0">
+                  <img src="${recommendation.image}" alt="${recommendation.name}" class="w-full h-full object-cover rounded-md" />
+                </div>
+              ` : ''}
+              <div class="flex-1 min-w-0">
+                <h3 class="font-bold text-white mb-1">${recommendation.name}</h3>
+                <p class="text-sm text-dashboard-muted mb-2">${recommendation.type} • ${recommendation.price_level} • Rating: ${recommendation.rating}</p>
+                ${recommendation.description ? `
+                  <p class="text-sm text-dashboard-muted line-clamp-2">${recommendation.description}</p>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        </a>
       `)
       .run();
   };
