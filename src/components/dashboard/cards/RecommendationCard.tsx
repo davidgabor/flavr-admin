@@ -7,7 +7,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { EditRecommendationDialog } from "../EditRecommendationDialog";
-import { Trash2, Star } from "lucide-react";
+import { Trash2, Star, MapPin } from "lucide-react";
+import { useData } from "@/contexts/DataContext";
 
 interface RecommendationCardProps {
   recommendation: any;
@@ -15,6 +16,9 @@ interface RecommendationCardProps {
 }
 
 export const RecommendationCard = ({ recommendation, onDelete }: RecommendationCardProps) => {
+  const { destinations } = useData();
+  const destination = destinations.find(d => d.id === recommendation.destination_id);
+
   return (
     <Card className="group relative overflow-hidden bg-dashboard-card border-white/5 hover:border-dashboard-accent/50 transition-all duration-300">
       {recommendation.image && (
@@ -27,6 +31,12 @@ export const RecommendationCard = ({ recommendation, onDelete }: RecommendationC
         </div>
       )}
       <CardHeader className="relative">
+        <div className="flex items-center gap-2 mb-2 text-dashboard-muted">
+          <MapPin className="h-4 w-4" />
+          <span className="text-sm">
+            {destination?.name}, {destination?.country} ({destination?.region})
+          </span>
+        </div>
         <CardTitle className="flex items-center justify-between font-judson text-white">
           <span className="line-clamp-1">{recommendation.name}</span>
           <div className="flex gap-2">
