@@ -8,6 +8,7 @@ interface ContentTabsProps {
   recommendations: any[];
   people: any[];
   blogPosts: any[];
+  subscribers: any[];
 }
 
 export const ContentTabs = ({
@@ -17,6 +18,7 @@ export const ContentTabs = ({
   recommendations,
   people,
   blogPosts,
+  subscribers,
 }: ContentTabsProps) => {
   return (
     <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
@@ -25,6 +27,7 @@ export const ContentTabs = ({
         <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
         <TabsTrigger value="people">People</TabsTrigger>
         <TabsTrigger value="blog">Blog Posts</TabsTrigger>
+        <TabsTrigger value="subscribers">Subscribers</TabsTrigger>
       </TabsList>
 
       <ContentTabPanel
@@ -33,6 +36,7 @@ export const ContentTabs = ({
         recommendations={recommendations}
         people={people}
         blogPosts={blogPosts}
+        subscribers={subscribers}
       />
     </Tabs>
   );

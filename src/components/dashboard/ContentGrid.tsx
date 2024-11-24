@@ -12,6 +12,7 @@ const ContentGrid = () => {
     recommendations,
     people,
     blogPosts,
+    subscribers,
     loading,
     refreshData,
   } = useData();
@@ -54,6 +55,7 @@ const ContentGrid = () => {
         recommendations={recommendations}
         people={people}
         blogPosts={blogPosts}
+        subscribers={subscribers}
       />
       {showNewDialog && (
         <ContentDialogs

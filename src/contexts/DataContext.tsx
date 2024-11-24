@@ -7,6 +7,7 @@ type DataContextType = {
   recommendations: any[];
   people: any[];
   blogPosts: any[];
+  subscribers: any[];
   loading: boolean;
   refreshData: () => Promise<void>;
   deleteDestination: (id: string) => Promise<void>;
@@ -24,6 +25,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [recommendations, setRecommendations] = useState<any[]>([]);
   const [people, setPeople] = useState<any[]>([]);
   const [blogPosts, setBlogPosts] = useState<any[]>([]);
+  const [subscribers, setSubscribers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const refreshData = async () => {
@@ -71,10 +73,22 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      const { data: subscribersData, error: subscribersError } = await supabase
+        .from("newsletter_subscribers")
+        .select("*")
+        .order('created_at', { ascending: false });
+
+      if (subscribersError) {
+        console.error("Error fetching subscribers:", subscribersError);
+        toast.error("Failed to fetch subscribers");
+        return;
+      }
+
       setDestinations(destData || []);
       setRecommendations(recsData || []);
       setPeople(peopleData || []);
       setBlogPosts(blogData || []);
+      setSubscribers(subscribersData || []);
     } catch (error) {
       console.error("Error in refreshData:", error);
       toast.error("Failed to fetch data");
@@ -184,6 +198,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         recommendations,
         people,
         blogPosts,
+        subscribers,
         loading,
         refreshData,
         deleteDestination,

@@ -3,6 +3,7 @@ import { DestinationCard } from "../cards/DestinationCard";
 import { RecommendationCard } from "../cards/RecommendationCard";
 import { PersonCard } from "../cards/PersonCard";
 import { BlogPostCard } from "../cards/BlogPostCard";
+import { SubscribersTable } from "../tables/SubscribersTable";
 import { useData } from "@/contexts/DataContext";
 import { toast } from "sonner";
 
@@ -12,6 +13,7 @@ interface ContentTabPanelProps {
   recommendations: any[];
   people: any[];
   blogPosts: any[];
+  subscribers: any[];
 }
 
 export const ContentTabPanel = ({
@@ -20,6 +22,7 @@ export const ContentTabPanel = ({
   recommendations,
   people,
   blogPosts,
+  subscribers,
 }: ContentTabPanelProps) => {
   const { deleteDestination, deleteRecommendation, deletePerson, deleteBlogPost } = useData();
 
@@ -89,6 +92,10 @@ export const ContentTabPanel = ({
             />
           ))}
         </div>
+      </TabsContent>
+
+      <TabsContent value="subscribers" className="animate-fade-in">
+        <SubscribersTable subscribers={subscribers} />
       </TabsContent>
     </>
   );
