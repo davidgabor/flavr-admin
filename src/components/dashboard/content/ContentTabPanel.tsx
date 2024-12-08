@@ -6,6 +6,14 @@ import { BlogPostCard } from "../cards/BlogPostCard";
 import { SubscribersTable } from "../tables/SubscribersTable";
 import { useData } from "@/contexts/DataContext";
 import { toast } from "sonner";
+import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ContentTabPanelProps {
   activeTab: string;
@@ -25,6 +33,7 @@ export const ContentTabPanel = ({
   subscribers,
 }: ContentTabPanelProps) => {
   const { deleteDestination, deleteRecommendation, deletePerson, deleteBlogPost } = useData();
+  const [selectedDestination, setSelectedDestination] = useState<string>("all");
 
   const handleDelete = async (type: "destination" | "recommendation" | "person" | "blog", id: string) => {
     try {
@@ -44,6 +53,10 @@ export const ContentTabPanel = ({
     }
   };
 
+  const filteredRecommendations = selectedDestination === "all" 
+    ? recommendations
+    : recommendations.filter(rec => rec.destination_id === selectedDestination);
+
   return (
     <>
       <TabsContent value="destinations" className="animate-fade-in">
@@ -59,8 +72,23 @@ export const ContentTabPanel = ({
       </TabsContent>
 
       <TabsContent value="recommendations" className="animate-fade-in">
+        <div className="mb-4">
+          <Select value={selectedDestination} onValueChange={setSelectedDestination}>
+            <SelectTrigger className="w-[280px] bg-dashboard-card text-white border-white/5">
+              <SelectValue placeholder="Filter by destination" />
+            </SelectTrigger>
+            <SelectContent className="bg-dashboard-card border-white/5">
+              <SelectItem value="all" className="text-white">All destinations</SelectItem>
+              {destinations.map((dest) => (
+                <SelectItem key={dest.id} value={dest.id} className="text-white">
+                  {dest.name}, {dest.country}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {recommendations.map((rec) => (
+          {filteredRecommendations.map((rec) => (
             <RecommendationCard
               key={rec.id}
               recommendation={rec}
