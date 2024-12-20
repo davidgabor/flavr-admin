@@ -37,29 +37,20 @@ export const RecommendationCard = ({ recommendation, onDelete }: RecommendationC
             {destination?.name}, {destination?.country} ({destination?.region})
           </span>
         </div>
-        <div className="flex items-start justify-between">
-          <CardTitle className="font-judson text-white">
-            <span className="line-clamp-1 text-left">{recommendation.name}</span>
-          </CardTitle>
-          <div className="flex flex-col items-end gap-2">
-            {recommendation.cuisine && (
-              <div className="inline-block rounded-full bg-dashboard-accent/20 px-2 py-1 text-xs text-dashboard-accent">
-                {recommendation.cuisine}
-              </div>
-            )}
-            <div className="flex gap-2">
-              <EditRecommendationDialog recommendation={recommendation} />
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onDelete(recommendation.id)}
-                className="hover:bg-red-500/20"
-              >
-                <Trash2 className="h-4 w-4 text-red-500" />
-              </Button>
-            </div>
+        <CardTitle className="flex items-start justify-between font-judson text-white">
+          <span className="line-clamp-1 text-left">{recommendation.name}</span>
+          <div className="flex gap-2">
+            <EditRecommendationDialog recommendation={recommendation} />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onDelete(recommendation.id)}
+              className="hover:bg-red-500/20"
+            >
+              <Trash2 className="h-4 w-4 text-red-500" />
+            </Button>
           </div>
-        </div>
+        </CardTitle>
         <CardDescription className="flex items-start gap-2 text-dashboard-muted">
           <span>{recommendation.type}</span>
           <span>•</span>
@@ -75,6 +66,11 @@ export const RecommendationCard = ({ recommendation, onDelete }: RecommendationC
         <p className="line-clamp-2 text-sm text-dashboard-muted text-left">
           {recommendation.description}
         </p>
+        {recommendation.cuisine && (
+          <div className="inline-block rounded-full bg-dashboard-accent/20 px-2 py-1 text-xs text-dashboard-accent">
+            {recommendation.cuisine}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
