@@ -31,14 +31,14 @@ export const RecommendationCard = ({ recommendation, onDelete }: RecommendationC
         </div>
       )}
       <CardHeader className="relative">
-        <div className="flex items-center gap-2 mb-2 text-dashboard-muted">
-          <MapPin className="h-4 w-4" />
-          <span className="text-sm">
+        <div className="flex items-start gap-2 mb-2 text-dashboard-muted">
+          <MapPin className="h-4 w-4 mt-0.5" />
+          <span className="text-sm text-left">
             {destination?.name}, {destination?.country} ({destination?.region})
           </span>
         </div>
-        <CardTitle className="flex items-center justify-between font-judson text-white">
-          <span className="line-clamp-1">{recommendation.name}</span>
+        <CardTitle className="flex items-start justify-between font-judson text-white">
+          <span className="line-clamp-1 text-left">{recommendation.name}</span>
           <div className="flex gap-2">
             <EditRecommendationDialog recommendation={recommendation} />
             <Button
@@ -51,7 +51,7 @@ export const RecommendationCard = ({ recommendation, onDelete }: RecommendationC
             </Button>
           </div>
         </CardTitle>
-        <CardDescription className="flex items-center gap-2 text-dashboard-muted">
+        <CardDescription className="flex items-start gap-2 text-dashboard-muted">
           <span>{recommendation.type}</span>
           <span>•</span>
           <span>{recommendation.price_level}</span>
@@ -63,7 +63,7 @@ export const RecommendationCard = ({ recommendation, onDelete }: RecommendationC
         </CardDescription>
       </CardHeader>
       <CardContent className="relative space-y-2">
-        <p className="line-clamp-2 text-sm text-dashboard-muted">
+        <p className="line-clamp-2 text-sm text-dashboard-muted text-left">
           {recommendation.description}
         </p>
         {recommendation.cuisine && (
