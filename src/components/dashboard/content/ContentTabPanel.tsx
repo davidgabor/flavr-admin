@@ -71,32 +71,32 @@ export const ContentTabPanel = ({
         </div>
       </TabsContent>
 
-      <TabsContent value="recommendations" className="animate-fade-in">
-        <div className="mb-4">
-          <Select value={selectedDestination} onValueChange={setSelectedDestination}>
-            <SelectTrigger className="w-[280px] bg-dashboard-card text-white border-white/5">
-              <SelectValue placeholder="Filter by destination" />
-            </SelectTrigger>
-            <SelectContent className="bg-dashboard-card border-white/5">
-              <SelectItem value="all" className="text-white">All destinations</SelectItem>
-              {destinations.map((dest) => (
-                <SelectItem key={dest.id} value={dest.id} className="text-white">
-                  {dest.name}, {dest.country}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredRecommendations.map((rec) => (
-            <RecommendationCard
-              key={rec.id}
-              recommendation={rec}
-              onDelete={(id) => handleDelete("recommendation", id)}
-            />
-          ))}
-        </div>
-      </TabsContent>
+<TabsContent value="recommendations" className="animate-fade-in">
+  <div className="mb-4">
+    <Select value={selectedDestination} onValueChange={setSelectedDestination}>
+      <SelectTrigger className="w-[280px] bg-dashboard-card text-white border-white/5">
+        <SelectValue placeholder="Filter by destination" />
+      </SelectTrigger>
+      <SelectContent className="bg-dashboard-card border-white/5">
+        <SelectItem value="all" className="text-white">All destinations</SelectItem>
+        {destinations.map((dest) => (
+          <SelectItem key={dest.id} value={dest.id} className="text-white">
+            {dest.name}, {dest.country}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  </div>
+  <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+    {filteredRecommendations.map((rec) => (
+      <RecommendationCard
+        key={rec.id}
+        recommendation={rec}
+        onDelete={(id) => handleDelete("recommendation", id)}
+      />
+    ))}
+  </div>
+</TabsContent>
 
       <TabsContent value="people" className="animate-fade-in">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
