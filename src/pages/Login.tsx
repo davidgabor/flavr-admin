@@ -165,9 +165,7 @@ const Login = () => {
                   fontSize: '14px',
                 },
                 label: { 
-                  color: 'white',
-                  fontSize: '14px',
-                  marginBottom: '4px',
+                  display: 'none', // Hide the labels
                 },
                 input: {
                   backgroundColor: 'rgba(255, 255, 255, 0.05)',
