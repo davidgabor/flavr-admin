@@ -13,11 +13,21 @@ const Login = () => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        const { data: profile } = await supabase
+        const { data: profile, error } = await supabase
           .from("profiles")
           .select("is_admin")
           .eq("id", session.user.id)
-          .single();
+          .maybeSingle();
+
+        if (error) {
+          console.error("Error fetching profile:", error);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to fetch user profile.",
+          });
+          return;
+        }
 
         if (profile?.is_admin) {
           navigate("/");
@@ -36,13 +46,45 @@ const Login = () => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("Auth state changed:", event);
+      
       if (event === "SIGNED_IN" && session) {
         console.log("User signed in:", session.user.email);
-        const { data: profile } = await supabase
+        
+        // First ensure profile exists
+        const { error: upsertError } = await supabase
+          .from("profiles")
+          .upsert({ 
+            id: session.user.id,
+            email: session.user.email,
+            updated_at: new Date().toISOString()
+          });
+
+        if (upsertError) {
+          console.error("Error upserting profile:", upsertError);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to create user profile.",
+          });
+          return;
+        }
+
+        // Then check if admin
+        const { data: profile, error: profileError } = await supabase
           .from("profiles")
           .select("is_admin")
           .eq("id", session.user.id)
-          .single();
+          .maybeSingle();
+
+        if (profileError) {
+          console.error("Error fetching profile:", profileError);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to fetch user profile.",
+          });
+          return;
+        }
 
         if (profile?.is_admin) {
           navigate("/");
