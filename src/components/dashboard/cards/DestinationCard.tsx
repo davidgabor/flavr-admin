@@ -41,12 +41,12 @@ export const DestinationCard = ({ destination, onDelete }: DestinationCardProps)
             </Button>
           </div>
         </CardTitle>
-        <CardDescription className="text-dashboard-muted">
+        <CardDescription className="text-dashboard-muted text-left">
           {destination.country}
         </CardDescription>
       </CardHeader>
       <CardContent className="relative">
-        <p className="line-clamp-2 text-sm text-dashboard-muted">
+        <p className="line-clamp-2 text-sm text-dashboard-muted text-left">
           {destination.description}
         </p>
       </CardContent>
