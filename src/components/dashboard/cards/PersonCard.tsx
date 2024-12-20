@@ -17,7 +17,7 @@ export const PersonCard = ({ person, onDelete }: PersonCardProps) => {
   return (
     <Card className="group relative overflow-hidden bg-dashboard-card border-white/5 hover:border-dashboard-accent/50 transition-all duration-300">
       <CardContent className="pt-6">
-        <div className="flex items-center gap-4">
+        <div className="flex items-start gap-4">
           {person.image && (
             <img
               src={person.image}
@@ -25,7 +25,7 @@ export const PersonCard = ({ person, onDelete }: PersonCardProps) => {
               className="h-16 w-16 rounded-full object-cover"
             />
           )}
-          <div>
+          <div className="text-left">
             <h3 className="text-lg font-semibold text-white">{person.name}</h3>
             {person.bio && (
               <p className="mt-1 text-sm text-dashboard-muted">{person.bio}</p>
