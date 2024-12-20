@@ -35,6 +35,11 @@ const Login = () => {
         }
       } catch (error) {
         console.error("Error in checkSession:", error);
+        // If there's a refresh token error, sign out silently
+        if (error.message?.includes('refresh_token_not_found')) {
+          await supabase.auth.signOut();
+          return;
+        }
         toast({
           variant: "destructive",
           title: "Error",
@@ -89,6 +94,11 @@ const Login = () => {
           }
         } catch (error) {
           console.error("Error in auth state change handler:", error);
+          // If there's a refresh token error, sign out silently
+          if (error.message?.includes('refresh_token_not_found')) {
+            await supabase.auth.signOut();
+            return;
+          }
           toast({
             variant: "destructive",
             title: "Error",
