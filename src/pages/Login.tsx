@@ -11,27 +11,38 @@ const Login = () => {
 
   useEffect(() => {
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        console.log("Session found:", session);
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("is_admin")
-          .eq("id", session.user.id)
-          .maybeSingle();
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          console.log("Session found:", session);
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("is_admin")
+            .eq("id", session.user.id)
+            .maybeSingle();
 
-        if (profile?.is_admin) {
-          console.log("Admin user confirmed, redirecting to dashboard");
-          navigate("/");
-        } else {
-          console.log("Non-admin user, showing error");
-          toast({
-            variant: "destructive",
-            title: "Access Denied",
-            description: "You don't have admin privileges.",
-          });
-          await supabase.auth.signOut();
+          console.log("Profile data:", profile);
+
+          if (profile?.is_admin) {
+            console.log("Admin user confirmed, redirecting to dashboard");
+            navigate("/", { replace: true });
+          } else {
+            console.log("Non-admin user, showing error");
+            toast({
+              variant: "destructive",
+              title: "Access Denied",
+              description: "You don't have admin privileges.",
+            });
+            await supabase.auth.signOut();
+          }
         }
+      } catch (error) {
+        console.error("Error in checkSession:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "An error occurred while checking your session.",
+        });
       }
     };
 
@@ -43,43 +54,54 @@ const Login = () => {
       if (event === "SIGNED_IN" && session) {
         console.log("User signed in:", session.user.email);
         
-        // First ensure profile exists
-        const { error: upsertError } = await supabase
-          .from("profiles")
-          .upsert({ 
-            id: session.user.id,
-            email: session.user.email,
-            updated_at: new Date().toISOString()
-          });
+        try {
+          // First ensure profile exists
+          const { error: upsertError } = await supabase
+            .from("profiles")
+            .upsert({ 
+              id: session.user.id,
+              email: session.user.email,
+              updated_at: new Date().toISOString()
+            });
 
-        if (upsertError) {
-          console.error("Error upserting profile:", upsertError);
+          if (upsertError) {
+            console.error("Error upserting profile:", upsertError);
+            toast({
+              variant: "destructive",
+              title: "Error",
+              description: "Failed to create user profile.",
+            });
+            return;
+          }
+
+          // Then check if admin
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("is_admin")
+            .eq("id", session.user.id)
+            .maybeSingle();
+
+          console.log("Profile data after sign in:", profile);
+
+          if (profile?.is_admin) {
+            console.log("Admin user confirmed, redirecting to dashboard");
+            navigate("/", { replace: true });
+          } else {
+            console.log("Non-admin user, showing error");
+            toast({
+              variant: "destructive",
+              title: "Access Denied",
+              description: "You don't have admin privileges.",
+            });
+            await supabase.auth.signOut();
+          }
+        } catch (error) {
+          console.error("Error in auth state change handler:", error);
           toast({
             variant: "destructive",
             title: "Error",
-            description: "Failed to create user profile.",
+            description: "An error occurred while processing your login.",
           });
-          return;
-        }
-
-        // Then check if admin
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("is_admin")
-          .eq("id", session.user.id)
-          .maybeSingle();
-
-        if (profile?.is_admin) {
-          console.log("Admin user confirmed, redirecting to dashboard");
-          navigate("/", { replace: true });
-        } else {
-          console.log("Non-admin user, showing error");
-          toast({
-            variant: "destructive",
-            title: "Access Denied",
-            description: "You don't have admin privileges.",
-          });
-          await supabase.auth.signOut();
         }
       }
     });
