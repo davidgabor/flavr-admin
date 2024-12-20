@@ -13,6 +13,7 @@ const Login = () => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
+        console.log("Session found:", session);
         const { data: profile, error } = await supabase
           .from("profiles")
           .select("is_admin")
@@ -30,8 +31,10 @@ const Login = () => {
         }
 
         if (profile?.is_admin) {
+          console.log("Admin user confirmed, redirecting to dashboard");
           navigate("/");
         } else {
+          console.log("Non-admin user, showing error");
           toast({
             variant: "destructive",
             title: "Access Denied",
@@ -87,8 +90,10 @@ const Login = () => {
         }
 
         if (profile?.is_admin) {
+          console.log("Admin user confirmed, redirecting to dashboard");
           navigate("/");
         } else {
+          console.log("Non-admin user, showing error");
           toast({
             variant: "destructive",
             title: "Access Denied",
