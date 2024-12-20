@@ -3,7 +3,9 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertTriangle } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -28,11 +30,6 @@ const Login = () => {
             navigate("/", { replace: true });
           } else {
             console.log("Non-admin user, showing error");
-            toast({
-              variant: "destructive",
-              title: "Access Denied",
-              description: "You don't have admin privileges.",
-            });
             await supabase.auth.signOut();
           }
         }
@@ -88,11 +85,6 @@ const Login = () => {
             navigate("/", { replace: true });
           } else {
             console.log("Non-admin user, showing error");
-            toast({
-              variant: "destructive",
-              title: "Access Denied",
-              description: "You don't have admin privileges.",
-            });
             await supabase.auth.signOut();
           }
         } catch (error) {
@@ -117,6 +109,13 @@ const Login = () => {
             <h1 className="text-3xl font-judson text-white mb-2">Welcome Back</h1>
             <p className="text-dashboard-muted text-sm">Sign in to access your admin dashboard</p>
           </div>
+
+          <Alert variant="destructive" className="mb-4 bg-red-950/50 border-red-900/50">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription className="ml-2">
+              This dashboard is restricted to admin users only. If you need access, please contact your administrator.
+            </AlertDescription>
+          </Alert>
 
           <Auth
             supabaseClient={supabase}
