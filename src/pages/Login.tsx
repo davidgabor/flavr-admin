@@ -117,6 +117,15 @@ const Login = () => {
             <h1 className="text-3xl font-judson text-white mb-2">Welcome Back</h1>
             <p className="text-dashboard-muted text-sm">Sign in to access your admin dashboard</p>
           </div>
+          
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-white/5"></span>
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-dashboard-card px-2 text-dashboard-muted">Continue with</span>
+            </div>
+          </div>
 
           <Auth
             supabaseClient={supabase}
@@ -156,7 +165,7 @@ const Login = () => {
                   fontSize: '14px',
                 },
                 label: { 
-                  display: 'none',
+                  display: 'none', // Hide the labels
                 },
                 input: {
                   backgroundColor: 'rgba(255, 255, 255, 0.05)',
