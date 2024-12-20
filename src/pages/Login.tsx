@@ -3,9 +3,11 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -19,6 +21,13 @@ const Login = () => {
 
         if (profile?.is_admin) {
           navigate("/");
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Access Denied",
+            description: "You don't have admin privileges.",
+          });
+          await supabase.auth.signOut();
         }
       }
     };
@@ -26,21 +35,30 @@ const Login = () => {
     checkSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_IN") {
+      console.log("Auth state changed:", event);
+      if (event === "SIGNED_IN" && session) {
+        console.log("User signed in:", session.user.email);
         const { data: profile } = await supabase
           .from("profiles")
           .select("is_admin")
-          .eq("id", session?.user.id)
+          .eq("id", session.user.id)
           .single();
 
         if (profile?.is_admin) {
           navigate("/");
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Access Denied",
+            description: "You don't have admin privileges.",
+          });
+          await supabase.auth.signOut();
         }
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, toast]);
 
   return (
     <div className="min-h-screen bg-dashboard-background flex items-center justify-center p-4">
@@ -55,8 +73,18 @@ const Login = () => {
                 colors: {
                   brand: '#2563eb',
                   brandAccent: '#1d4ed8',
+                  inputBackground: 'white',
+                  inputText: 'black',
+                  inputPlaceholder: 'darkgray',
                 }
               }
+            },
+            style: {
+              button: { background: '#2563eb', color: 'white' },
+              anchor: { color: '#2563eb' },
+              container: { color: 'white' },
+              message: { color: 'white' },
+              label: { color: 'white' }
             }
           }}
           providers={[]}
