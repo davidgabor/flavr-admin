@@ -14,21 +14,11 @@ const Login = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         console.log("Session found:", session);
-        const { data: profile, error } = await supabase
+        const { data: profile } = await supabase
           .from("profiles")
           .select("is_admin")
           .eq("id", session.user.id)
           .maybeSingle();
-
-        if (error) {
-          console.error("Error fetching profile:", error);
-          toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Failed to fetch user profile.",
-          });
-          return;
-        }
 
         if (profile?.is_admin) {
           console.log("Admin user confirmed, redirecting to dashboard");
@@ -73,25 +63,15 @@ const Login = () => {
         }
 
         // Then check if admin
-        const { data: profile, error: profileError } = await supabase
+        const { data: profile } = await supabase
           .from("profiles")
           .select("is_admin")
           .eq("id", session.user.id)
           .maybeSingle();
 
-        if (profileError) {
-          console.error("Error fetching profile:", profileError);
-          toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Failed to fetch user profile.",
-          });
-          return;
-        }
-
         if (profile?.is_admin) {
           console.log("Admin user confirmed, redirecting to dashboard");
-          navigate("/");
+          navigate("/", { replace: true });
         } else {
           console.log("Non-admin user, showing error");
           toast({
