@@ -110,7 +110,7 @@ const Login = () => {
   }, [navigate, toast]);
 
   return (
-    <div className="min-h-screen bg-dashboard-background flex items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-dashboard-background to-dashboard-background">
+    <div className="min-h-screen bg-dashboard-background flex items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-dashboard-accent/20 via-dashboard-background to-dashboard-background">
       <div className="w-full max-w-md backdrop-blur-sm bg-dashboard-card/95 p-8 rounded-xl shadow-[0_0_15px_rgba(0,0,0,0.2)] border border-white/5">
         <div className="space-y-6">
           <div className="text-center space-y-2">
@@ -134,19 +134,19 @@ const Login = () => {
               variables: {
                 default: {
                   colors: {
-                    brand: '#9b87f5',
-                    brandAccent: '#7E69AB',
+                    brand: '#F97316',
+                    brandAccent: '#EA580C',
                     inputBackground: 'rgba(255, 255, 255, 0.05)',
                     inputText: 'white',
                     inputPlaceholder: '#71717A',
                     inputBorder: 'rgba(255, 255, 255, 0.1)',
-                    inputBorderFocus: '#9b87f5',
+                    inputBorderFocus: '#F97316',
                   }
                 }
               },
               style: {
                 button: { 
-                  background: '#9b87f5',
+                  background: '#F97316',
                   color: 'white',
                   borderRadius: '8px',
                   fontSize: '14px',
@@ -154,7 +154,7 @@ const Login = () => {
                   height: '42px',
                 },
                 anchor: { 
-                  color: '#9b87f5',
+                  color: '#F97316',
                   fontSize: '14px',
                 },
                 container: { 
