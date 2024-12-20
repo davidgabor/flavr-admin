@@ -110,36 +110,80 @@ const Login = () => {
   }, [navigate, toast]);
 
   return (
-    <div className="min-h-screen bg-dashboard-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-dashboard-card p-8 rounded-lg shadow-lg">
-        <h1 className="text-2xl font-bold text-white mb-6 text-center">Admin Dashboard Login</h1>
-        <Auth
-          supabaseClient={supabase}
-          appearance={{
-            theme: ThemeSupa,
-            variables: {
-              default: {
-                colors: {
-                  brand: '#2563eb',
-                  brandAccent: '#1d4ed8',
-                  inputBackground: 'white',
-                  inputText: 'black',
-                  inputPlaceholder: 'darkgray',
+    <div className="min-h-screen bg-dashboard-background flex items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-dashboard-background to-dashboard-background">
+      <div className="w-full max-w-md backdrop-blur-sm bg-dashboard-card/95 p-8 rounded-xl shadow-[0_0_15px_rgba(0,0,0,0.2)] border border-white/5">
+        <div className="space-y-6">
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl font-judson text-white mb-2">Welcome Back</h1>
+            <p className="text-dashboard-muted text-sm">Sign in to access your admin dashboard</p>
+          </div>
+          
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-white/5"></span>
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-dashboard-card px-2 text-dashboard-muted">Continue with</span>
+            </div>
+          </div>
+
+          <Auth
+            supabaseClient={supabase}
+            appearance={{
+              theme: ThemeSupa,
+              variables: {
+                default: {
+                  colors: {
+                    brand: '#9b87f5',
+                    brandAccent: '#7E69AB',
+                    inputBackground: 'rgba(255, 255, 255, 0.05)',
+                    inputText: 'white',
+                    inputPlaceholder: '#71717A',
+                    inputBorder: 'rgba(255, 255, 255, 0.1)',
+                    inputBorderFocus: '#9b87f5',
+                  }
                 }
+              },
+              style: {
+                button: { 
+                  background: '#9b87f5',
+                  color: 'white',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  padding: '10px 15px',
+                  height: '42px',
+                },
+                anchor: { 
+                  color: '#9b87f5',
+                  fontSize: '14px',
+                },
+                container: { 
+                  color: 'white',
+                },
+                message: { 
+                  color: 'white',
+                  fontSize: '14px',
+                },
+                label: { 
+                  color: 'white',
+                  fontSize: '14px',
+                  marginBottom: '4px',
+                },
+                input: {
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  borderColor: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '8px',
+                  padding: '10px 15px',
+                  height: '42px',
+                  fontSize: '14px',
+                },
               }
-            },
-            style: {
-              button: { background: '#2563eb', color: 'white' },
-              anchor: { color: '#2563eb' },
-              container: { color: 'white' },
-              message: { color: 'white' },
-              label: { color: 'white' }
-            }
-          }}
-          providers={[]}
-          view="sign_in"
-          showLinks={false}
-        />
+            }}
+            providers={[]}
+            view="sign_in"
+            showLinks={false}
+          />
+        </div>
       </div>
     </div>
   );
