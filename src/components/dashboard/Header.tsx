@@ -1,84 +1,27 @@
-import { Search } from "lucide-react";
-import { useState } from "react";
-import { useData } from "@/contexts/DataContext";
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import { EditDestinationDialog } from "./EditDestinationDialog";
-import { EditRecommendationDialog } from "./EditRecommendationDialog";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 
 const Header = () => {
-  const [open, setOpen] = useState(false);
-  const { destinations, recommendations } = useData();
-  const [selectedDestination, setSelectedDestination] = useState<any>(null);
-  const [selectedRecommendation, setSelectedRecommendation] = useState<any>(null);
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
 
   return (
-    <header className="glass-panel flex h-16 items-center px-6">
-      <div className="relative flex w-96 items-center">
-        <Search className="absolute left-3 h-4 w-4 text-dashboard-muted" />
-        <input
-          type="text"
-          placeholder="Search content..."
-          className="h-10 w-full rounded-lg bg-white/5 pl-10 pr-4 text-sm text-white placeholder-dashboard-muted outline-none focus:ring-1 focus:ring-dashboard-accent"
-          onClick={() => setOpen(true)}
-          readOnly
-        />
+    <header className="border-b border-white/5 bg-dashboard-card">
+      <div className="flex h-16 items-center justify-between px-6">
+        <div className="flex items-center gap-4">
+          <h1 className="text-xl font-semibold">Admin Dashboard</h1>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleLogout}
+          className="text-dashboard-muted hover:text-white"
+        >
+          <LogOut className="h-5 w-5" />
+        </Button>
       </div>
-
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type to search..." />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Destinations">
-            {destinations.map((destination) => (
-              <CommandItem
-                key={destination.id}
-                value={`destination-${destination.id}`}
-                onSelect={() => {
-                  setOpen(false);
-                  setSelectedDestination(destination);
-                }}
-              >
-                {destination.name}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-          <CommandGroup heading="Recommendations">
-            {recommendations.map((recommendation) => (
-              <CommandItem
-                key={recommendation.id}
-                value={`recommendation-${recommendation.id}`}
-                onSelect={() => {
-                  setOpen(false);
-                  setSelectedRecommendation(recommendation);
-                }}
-              >
-                {recommendation.name}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </CommandList>
-      </CommandDialog>
-
-      {selectedDestination && (
-        <EditDestinationDialog
-          destination={selectedDestination}
-          onClose={() => setSelectedDestination(null)}
-        />
-      )}
-      
-      {selectedRecommendation && (
-        <EditRecommendationDialog
-          recommendation={selectedRecommendation}
-          onClose={() => setSelectedRecommendation(null)}
-        />
-      )}
     </header>
   );
 };
