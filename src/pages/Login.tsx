@@ -110,21 +110,12 @@ const Login = () => {
   }, [navigate, toast]);
 
   return (
-    <div className="min-h-screen bg-dashboard-background flex items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-dashboard-accent/20 via-dashboard-background to-dashboard-background">
+    <div className="absolute inset-0 bg-dashboard-background flex items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-dashboard-accent/20 via-dashboard-background to-dashboard-background">
       <div className="w-full max-w-md backdrop-blur-sm bg-dashboard-card/95 p-8 rounded-xl shadow-[0_0_15px_rgba(0,0,0,0.2)] border border-white/5">
         <div className="space-y-6">
           <div className="text-center space-y-2">
             <h1 className="text-3xl font-judson text-white mb-2">Welcome Back</h1>
             <p className="text-dashboard-muted text-sm">Sign in to access your admin dashboard</p>
-          </div>
-          
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-white/5"></span>
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-dashboard-card px-2 text-dashboard-muted">Continue with</span>
-            </div>
           </div>
 
           <Auth
@@ -165,7 +156,7 @@ const Login = () => {
                   fontSize: '14px',
                 },
                 label: { 
-                  display: 'none', // Hide the labels
+                  display: 'none',
                 },
                 input: {
                   backgroundColor: 'rgba(255, 255, 255, 0.05)',
@@ -174,7 +165,7 @@ const Login = () => {
                   padding: '10px 15px',
                   height: '42px',
                   fontSize: '14px',
-                },
+                }
               }
             }}
             providers={[]}
