@@ -35,7 +35,6 @@ const Login = () => {
         }
       } catch (error) {
         console.error("Error in checkSession:", error);
-        // If there's a refresh token error, sign out silently
         if (error.message?.includes('refresh_token_not_found')) {
           await supabase.auth.signOut();
           return;
@@ -94,7 +93,6 @@ const Login = () => {
           }
         } catch (error) {
           console.error("Error in auth state change handler:", error);
-          // If there's a refresh token error, sign out silently
           if (error.message?.includes('refresh_token_not_found')) {
             await supabase.auth.signOut();
             return;
@@ -105,6 +103,10 @@ const Login = () => {
             description: "An error occurred while processing your login.",
           });
         }
+      } else if (event === "SIGNED_OUT") {
+        console.log("User signed out");
+      } else if (event === "USER_UPDATED") {
+        console.log("User updated");
       }
     });
 
@@ -180,6 +182,20 @@ const Login = () => {
             providers={[]}
             view="sign_in"
             showLinks={false}
+            localization={{
+              variables: {
+                sign_in: {
+                  email_label: 'Email',
+                  password_label: 'Password',
+                  email_input_placeholder: 'Your email',
+                  password_input_placeholder: 'Your password',
+                  button_label: 'Sign In',
+                  loading_button_label: 'Signing in...',
+                  social_provider_text: 'Sign in with {{provider}}',
+                  link_text: 'Already have an account? Sign in',
+                }
+              }
+            }}
           />
         </div>
       </div>
