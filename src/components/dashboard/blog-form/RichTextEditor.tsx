@@ -1,8 +1,9 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
+import Link from '@tiptap/extension-link';
 import { Button } from "@/components/ui/button";
-import { Bold, Italic, List, Image as ImageIcon, Quote, BookMarked } from "lucide-react";
+import { Bold, Italic, List, Image as ImageIcon, Quote, BookMarked, Link as LinkIcon } from "lucide-react";
 import { useData } from "@/contexts/DataContext";
 import {
   Popover,
@@ -10,6 +11,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 interface RichTextEditorProps {
   content: string;
@@ -18,11 +21,27 @@ interface RichTextEditorProps {
 
 export const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
   const { recommendations } = useData();
+  const [linkUrl, setLinkUrl] = useState('');
   
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        bulletList: {
+          keepMarks: true,
+          keepAttributes: false,
+        },
+        orderedList: {
+          keepMarks: true,
+          keepAttributes: false,
+        },
+      }),
       Image,
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: {
+          class: 'text-dashboard-accent hover:underline cursor-pointer',
+        },
+      }),
     ],
     content,
     onUpdate: ({ editor }) => {
@@ -38,6 +57,23 @@ export const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
     const url = window.prompt('Enter image URL');
     if (url) {
       editor.chain().focus().setImage({ src: url }).run();
+    }
+  };
+
+  const setLink = () => {
+    if (linkUrl) {
+      // Check if the URL has a protocol, if not add https://
+      const url = linkUrl.match(/^https?:\/\//) ? linkUrl : `https://${linkUrl}`;
+      
+      editor
+        .chain()
+        .focus()
+        .setLink({ href: url })
+        .run();
+      
+      setLinkUrl('');
+    } else {
+      editor.chain().focus().unsetLink().run();
     }
   };
 
@@ -110,6 +146,27 @@ export const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
         >
           <ImageIcon className="h-4 w-4" />
         </Button>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="sm">
+              <LinkIcon className="h-4 w-4" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80 p-4 bg-dashboard-card border-dashboard-accent/20">
+            <div className="flex gap-2">
+              <Input
+                type="text"
+                placeholder="Enter URL"
+                value={linkUrl}
+                onChange={(e) => setLinkUrl(e.target.value)}
+                className="flex-1 bg-dashboard-background border-white/10"
+              />
+              <Button size="sm" onClick={setLink}>
+                Add Link
+              </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="ghost" size="sm">
