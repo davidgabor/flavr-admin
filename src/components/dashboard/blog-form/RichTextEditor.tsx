@@ -34,6 +34,16 @@ export const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
           keepMarks: true,
           keepAttributes: false,
         },
+        paragraph: {
+          HTMLAttributes: {
+            class: 'mb-4'
+          }
+        },
+        hardBreak: {  // Enable hard breaks
+          HTMLAttributes: {
+            class: 'my-2'
+          }
+        }
       }),
       Image,
       Link.configure({
@@ -45,8 +55,25 @@ export const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
     ],
     content,
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+      // Ensure line breaks are preserved in the HTML output
+      const html = editor.getHTML().replace(/<br\s*\/?>/g, '<br />');
+      onChange(html);
     },
+    editorProps: {
+      attributes: {
+        class: 'prose prose-invert max-w-none focus:outline-none min-h-[200px]'
+      },
+      handleKeyDown: (view, event) => {
+        // Handle Shift + Enter for soft breaks
+        if (event.key === 'Enter' && event.shiftKey) {
+          view.dispatch(view.state.tr.replaceSelectionWith(
+            view.state.schema.nodes.hardBreak.create()
+          ));
+          return true;
+        }
+        return false;
+      }
+    }
   });
 
   if (!editor) {
@@ -197,7 +224,7 @@ export const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
       </div>
       <EditorContent 
         editor={editor} 
-        className="prose prose-invert max-w-none p-4 min-h-[300px] bg-dashboard-card focus:outline-none"
+        className="prose prose-invert max-w-none p-4 min-h-[300px] bg-dashboard-card focus:outline-none whitespace-pre-wrap"
       />
     </div>
   );
