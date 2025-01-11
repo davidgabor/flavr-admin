@@ -56,11 +56,12 @@ const Login = () => {
 
           console.log("Profile data:", profile);
 
-          if (profile?.is_admin) {
+          // Changed this condition to handle null/undefined cases
+          if (profile?.is_admin === true) {
             console.log("Admin user confirmed, redirecting");
             navigate("/", { replace: true });
           } else {
-            console.log("Non-admin user, signing out");
+            console.log("Non-admin user or no profile, signing out");
             await supabase.auth.signOut();
             toast({
               variant: "destructive",
@@ -112,7 +113,10 @@ const Login = () => {
 
           if (profileError) throw profileError;
 
-          if (profile?.is_admin) {
+          console.log("Profile after sign in:", profile);
+
+          // Changed this condition to handle null/undefined cases
+          if (profile?.is_admin === true) {
             navigate("/", { replace: true });
           } else {
             await supabase.auth.signOut();
