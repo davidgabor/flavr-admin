@@ -41,15 +41,13 @@ const Login = () => {
           }
 
           console.log("Profile data:", profileData);
-          const isAdmin = profileData?.is_admin === true;
-          console.log("Admin status:", isAdmin);
 
-          if (isAdmin) {
+          if (profileData?.is_admin) {
             console.log("Admin user confirmed, redirecting");
             navigate("/", { replace: true });
           } else {
             console.log("Non-admin user, signing out");
-            await supabase.auth.signOut({ scope: 'local' });
+            await supabase.auth.signOut();
             toast({
               variant: "destructive",
               title: "Access Denied",
@@ -59,7 +57,7 @@ const Login = () => {
         }
       } catch (error) {
         console.error("Error in checkSession:", error);
-        await supabase.auth.signOut({ scope: 'local' });
+        await supabase.auth.signOut();
         toast({
           variant: "destructive",
           title: "Error",
@@ -89,14 +87,12 @@ const Login = () => {
             throw profileError;
           }
 
-          console.log("Profile data:", profileData);
-          const isAdmin = profileData?.is_admin === true;
-          console.log("Admin status after sign in:", isAdmin);
+          console.log("Profile data after sign in:", profileData);
 
-          if (isAdmin) {
+          if (profileData?.is_admin) {
             navigate("/", { replace: true });
           } else {
-            await supabase.auth.signOut({ scope: 'local' });
+            await supabase.auth.signOut();
             toast({
               variant: "destructive",
               title: "Access Denied",
@@ -105,7 +101,7 @@ const Login = () => {
           }
         } catch (error) {
           console.error("Error in auth state change handler:", error);
-          await supabase.auth.signOut({ scope: 'local' });
+          await supabase.auth.signOut();
           toast({
             variant: "destructive",
             title: "Error",
