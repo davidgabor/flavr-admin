@@ -26,42 +26,17 @@ const Login = () => {
         }
 
         if (session && isSubscribed) {
-          console.log("Session found, checking or creating profile");
+          console.log("Session found, checking admin status");
           
-          // First ensure profile exists
-          const { error: upsertError } = await supabase
-            .from("profiles")
-            .upsert({ 
-              id: session.user.id,
-              email: session.user.email,
-              updated_at: new Date().toISOString()
-            });
+          // Get user metadata directly from the session
+          const isAdmin = session.user.user_metadata?.is_admin === true;
+          console.log("Admin status:", isAdmin);
 
-          if (upsertError) {
-            console.error("Profile upsert error:", upsertError);
-            throw upsertError;
-          }
-
-          // Then check admin status
-          const { data: profile, error: profileError } = await supabase
-            .from("profiles")
-            .select("is_admin")
-            .eq("id", session.user.id)
-            .maybeSingle();
-
-          if (profileError) {
-            console.error("Profile fetch error:", profileError);
-            throw profileError;
-          }
-
-          console.log("Profile data:", profile);
-
-          // Changed this condition to handle null/undefined cases
-          if (profile?.is_admin === true) {
+          if (isAdmin) {
             console.log("Admin user confirmed, redirecting");
             navigate("/", { replace: true });
           } else {
-            console.log("Non-admin user or no profile, signing out");
+            console.log("Non-admin user, signing out");
             await supabase.auth.signOut();
             toast({
               variant: "destructive",
@@ -90,33 +65,11 @@ const Login = () => {
 
       if (event === "SIGNED_IN" && session) {
         try {
-          // First ensure profile exists
-          const { error: upsertError } = await supabase
-            .from("profiles")
-            .upsert({ 
-              id: session.user.id,
-              email: session.user.email,
-              updated_at: new Date().toISOString()
-            });
+          // Check admin status from user metadata
+          const isAdmin = session.user.user_metadata?.is_admin === true;
+          console.log("Admin status after sign in:", isAdmin);
 
-          if (upsertError) {
-            console.error("Profile upsert error:", upsertError);
-            throw upsertError;
-          }
-
-          // Then check admin status
-          const { data: profile, error: profileError } = await supabase
-            .from("profiles")
-            .select("is_admin")
-            .eq("id", session.user.id)
-            .maybeSingle();
-
-          if (profileError) throw profileError;
-
-          console.log("Profile after sign in:", profile);
-
-          // Changed this condition to handle null/undefined cases
-          if (profile?.is_admin === true) {
+          if (isAdmin) {
             navigate("/", { replace: true });
           } else {
             await supabase.auth.signOut();
