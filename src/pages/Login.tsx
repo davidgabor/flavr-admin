@@ -28,8 +28,20 @@ const Login = () => {
         if (session && isSubscribed) {
           console.log("Session found, checking admin status");
           
-          // Check admin status from user_metadata
-          const isAdmin = session.user.user_metadata?.is_admin === true;
+          // Get admin status from profiles table
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('is_admin')
+            .eq('id', session.user.id)
+            .single();
+
+          if (profileError) {
+            console.error("Profile check error:", profileError);
+            throw profileError;
+          }
+
+          console.log("Profile data:", profileData);
+          const isAdmin = profileData?.is_admin === true;
           console.log("Admin status:", isAdmin);
 
           if (isAdmin) {
@@ -37,7 +49,6 @@ const Login = () => {
             navigate("/", { replace: true });
           } else {
             console.log("Non-admin user, signing out");
-            // Sign out without global scope to avoid session not found error
             await supabase.auth.signOut({ scope: 'local' });
             toast({
               variant: "destructive",
@@ -48,7 +59,6 @@ const Login = () => {
         }
       } catch (error) {
         console.error("Error in checkSession:", error);
-        // Sign out without global scope to avoid session not found error
         await supabase.auth.signOut({ scope: 'local' });
         toast({
           variant: "destructive",
@@ -67,14 +77,25 @@ const Login = () => {
 
       if (event === "SIGNED_IN" && session) {
         try {
-          // Check admin status from user_metadata
-          const isAdmin = session.user.user_metadata?.is_admin === true;
+          // Get admin status from profiles table
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('is_admin')
+            .eq('id', session.user.id)
+            .single();
+
+          if (profileError) {
+            console.error("Profile check error:", profileError);
+            throw profileError;
+          }
+
+          console.log("Profile data:", profileData);
+          const isAdmin = profileData?.is_admin === true;
           console.log("Admin status after sign in:", isAdmin);
 
           if (isAdmin) {
             navigate("/", { replace: true });
           } else {
-            // Sign out without global scope to avoid session not found error
             await supabase.auth.signOut({ scope: 'local' });
             toast({
               variant: "destructive",
@@ -84,7 +105,6 @@ const Login = () => {
           }
         } catch (error) {
           console.error("Error in auth state change handler:", error);
-          // Sign out without global scope to avoid session not found error
           await supabase.auth.signOut({ scope: 'local' });
           toast({
             variant: "destructive",
