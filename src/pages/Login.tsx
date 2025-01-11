@@ -14,14 +14,28 @@ const Login = () => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        console.log("Checking session:", { session, sessionError });
+        
+        if (sessionError) {
+          if (sessionError.message?.includes('refresh_token_not_found')) {
+            console.log("Refresh token not found, signing out");
+            await supabase.auth.signOut();
+            return;
+          }
+          throw sessionError;
+        }
+
         if (session) {
           console.log("Session found:", session);
-          const { data: profile } = await supabase
+          const { data: profile, error: profileError } = await supabase
             .from("profiles")
             .select("is_admin")
             .eq("id", session.user.id)
             .maybeSingle();
+
+          if (profileError) throw profileError;
 
           console.log("Profile data:", profile);
 
@@ -35,10 +49,6 @@ const Login = () => {
         }
       } catch (error) {
         console.error("Error in checkSession:", error);
-        if (error.message?.includes('refresh_token_not_found')) {
-          await supabase.auth.signOut();
-          return;
-        }
         toast({
           variant: "destructive",
           title: "Error",
@@ -56,7 +66,6 @@ const Login = () => {
         console.log("User signed in:", session.user.email);
         
         try {
-          // First ensure profile exists
           const { error: upsertError } = await supabase
             .from("profiles")
             .upsert({ 
@@ -65,22 +74,15 @@ const Login = () => {
               updated_at: new Date().toISOString()
             });
 
-          if (upsertError) {
-            console.error("Error upserting profile:", upsertError);
-            toast({
-              variant: "destructive",
-              title: "Error",
-              description: "Failed to create user profile.",
-            });
-            return;
-          }
+          if (upsertError) throw upsertError;
 
-          // Then check if admin
-          const { data: profile } = await supabase
+          const { data: profile, error: profileError } = await supabase
             .from("profiles")
             .select("is_admin")
             .eq("id", session.user.id)
             .maybeSingle();
+
+          if (profileError) throw profileError;
 
           console.log("Profile data after sign in:", profile);
 
@@ -93,10 +95,13 @@ const Login = () => {
           }
         } catch (error) {
           console.error("Error in auth state change handler:", error);
+          
           if (error.message?.includes('refresh_token_not_found')) {
+            console.log("Refresh token not found in auth change, signing out");
             await supabase.auth.signOut();
             return;
           }
+          
           toast({
             variant: "destructive",
             title: "Error",
@@ -105,8 +110,8 @@ const Login = () => {
         }
       } else if (event === "SIGNED_OUT") {
         console.log("User signed out");
-      } else if (event === "USER_UPDATED") {
-        console.log("User updated");
+      } else if (event === "TOKEN_REFRESHED") {
+        console.log("Token refreshed successfully");
       }
     });
 
