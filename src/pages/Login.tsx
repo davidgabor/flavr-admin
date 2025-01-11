@@ -28,8 +28,8 @@ const Login = () => {
         if (session && isSubscribed) {
           console.log("Session found, checking admin status");
           
-          // Get user metadata directly from the session
-          const isAdmin = session.user.user_metadata?.is_admin === true;
+          // Check admin status from raw_user_metadata
+          const isAdmin = session.user.raw_user_metadata?.is_admin === true;
           console.log("Admin status:", isAdmin);
 
           if (isAdmin) {
@@ -37,7 +37,8 @@ const Login = () => {
             navigate("/", { replace: true });
           } else {
             console.log("Non-admin user, signing out");
-            await supabase.auth.signOut();
+            // Sign out without global scope to avoid session not found error
+            await supabase.auth.signOut({ scope: 'local' });
             toast({
               variant: "destructive",
               title: "Access Denied",
@@ -47,7 +48,8 @@ const Login = () => {
         }
       } catch (error) {
         console.error("Error in checkSession:", error);
-        await supabase.auth.signOut();
+        // Sign out without global scope to avoid session not found error
+        await supabase.auth.signOut({ scope: 'local' });
         toast({
           variant: "destructive",
           title: "Error",
@@ -65,14 +67,15 @@ const Login = () => {
 
       if (event === "SIGNED_IN" && session) {
         try {
-          // Check admin status from user metadata
-          const isAdmin = session.user.user_metadata?.is_admin === true;
+          // Check admin status from raw_user_metadata
+          const isAdmin = session.user.raw_user_metadata?.is_admin === true;
           console.log("Admin status after sign in:", isAdmin);
 
           if (isAdmin) {
             navigate("/", { replace: true });
           } else {
-            await supabase.auth.signOut();
+            // Sign out without global scope to avoid session not found error
+            await supabase.auth.signOut({ scope: 'local' });
             toast({
               variant: "destructive",
               title: "Access Denied",
@@ -81,7 +84,8 @@ const Login = () => {
           }
         } catch (error) {
           console.error("Error in auth state change handler:", error);
-          await supabase.auth.signOut();
+          // Sign out without global scope to avoid session not found error
+          await supabase.auth.signOut({ scope: 'local' });
           toast({
             variant: "destructive",
             title: "Error",
