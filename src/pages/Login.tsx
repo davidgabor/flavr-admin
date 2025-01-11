@@ -28,8 +28,8 @@ const Login = () => {
         if (session && isSubscribed) {
           console.log("Session found, checking admin status");
           
-          // Check admin status from raw_user_metadata
-          const isAdmin = session.user.raw_user_metadata?.is_admin === true;
+          // Check admin status from user_metadata
+          const isAdmin = session.user.user_metadata?.is_admin === true;
           console.log("Admin status:", isAdmin);
 
           if (isAdmin) {
@@ -67,8 +67,8 @@ const Login = () => {
 
       if (event === "SIGNED_IN" && session) {
         try {
-          // Check admin status from raw_user_metadata
-          const isAdmin = session.user.raw_user_metadata?.is_admin === true;
+          // Check admin status from user_metadata
+          const isAdmin = session.user.user_metadata?.is_admin === true;
           console.log("Admin status after sign in:", isAdmin);
 
           if (isAdmin) {
