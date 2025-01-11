@@ -22,15 +22,27 @@ const Login = () => {
         
         if (sessionError) {
           console.error("Session check error:", sessionError);
-          if (sessionError.message?.includes('refresh_token_not_found')) {
-            await supabase.auth.signOut();
-            return;
-          }
           throw sessionError;
         }
 
         if (session && isSubscribed) {
-          console.log("Session found, checking admin status");
+          console.log("Session found, checking or creating profile");
+          
+          // First ensure profile exists
+          const { error: upsertError } = await supabase
+            .from("profiles")
+            .upsert({ 
+              id: session.user.id,
+              email: session.user.email,
+              updated_at: new Date().toISOString()
+            });
+
+          if (upsertError) {
+            console.error("Profile upsert error:", upsertError);
+            throw upsertError;
+          }
+
+          // Then check admin status
           const { data: profile, error: profileError } = await supabase
             .from("profiles")
             .select("is_admin")
@@ -59,6 +71,7 @@ const Login = () => {
         }
       } catch (error) {
         console.error("Error in checkSession:", error);
+        await supabase.auth.signOut();
         toast({
           variant: "destructive",
           title: "Error",
@@ -76,6 +89,21 @@ const Login = () => {
 
       if (event === "SIGNED_IN" && session) {
         try {
+          // First ensure profile exists
+          const { error: upsertError } = await supabase
+            .from("profiles")
+            .upsert({ 
+              id: session.user.id,
+              email: session.user.email,
+              updated_at: new Date().toISOString()
+            });
+
+          if (upsertError) {
+            console.error("Profile upsert error:", upsertError);
+            throw upsertError;
+          }
+
+          // Then check admin status
           const { data: profile, error: profileError } = await supabase
             .from("profiles")
             .select("is_admin")
@@ -96,6 +124,7 @@ const Login = () => {
           }
         } catch (error) {
           console.error("Error in auth state change handler:", error);
+          await supabase.auth.signOut();
           toast({
             variant: "destructive",
             title: "Error",
