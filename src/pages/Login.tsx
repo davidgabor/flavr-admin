@@ -12,39 +12,49 @@ const Login = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    let isSubscribed = true;
+
     const checkSession = async () => {
       try {
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
-        console.log("Checking session:", { session, sessionError });
+        console.log("Initial session check:", { session, sessionError });
         
         if (sessionError) {
+          console.error("Session check error:", sessionError);
           if (sessionError.message?.includes('refresh_token_not_found')) {
-            console.log("Refresh token not found, signing out");
             await supabase.auth.signOut();
             return;
           }
           throw sessionError;
         }
 
-        if (session) {
-          console.log("Session found:", session);
+        if (session && isSubscribed) {
+          console.log("Session found, checking admin status");
           const { data: profile, error: profileError } = await supabase
             .from("profiles")
             .select("is_admin")
             .eq("id", session.user.id)
             .maybeSingle();
 
-          if (profileError) throw profileError;
+          if (profileError) {
+            console.error("Profile fetch error:", profileError);
+            throw profileError;
+          }
 
           console.log("Profile data:", profile);
 
           if (profile?.is_admin) {
-            console.log("Admin user confirmed, redirecting to dashboard");
+            console.log("Admin user confirmed, redirecting");
             navigate("/", { replace: true });
           } else {
-            console.log("Non-admin user, showing error");
+            console.log("Non-admin user, signing out");
             await supabase.auth.signOut();
+            toast({
+              variant: "destructive",
+              title: "Access Denied",
+              description: "This dashboard is restricted to admin users only.",
+            });
           }
         }
       } catch (error) {
@@ -60,22 +70,12 @@ const Login = () => {
     checkSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state changed:", event);
+      console.log("Auth state changed:", event, session?.user?.email);
       
+      if (!isSubscribed) return;
+
       if (event === "SIGNED_IN" && session) {
-        console.log("User signed in:", session.user.email);
-        
         try {
-          const { error: upsertError } = await supabase
-            .from("profiles")
-            .upsert({ 
-              id: session.user.id,
-              email: session.user.email,
-              updated_at: new Date().toISOString()
-            });
-
-          if (upsertError) throw upsertError;
-
           const { data: profile, error: profileError } = await supabase
             .from("profiles")
             .select("is_admin")
@@ -84,38 +84,31 @@ const Login = () => {
 
           if (profileError) throw profileError;
 
-          console.log("Profile data after sign in:", profile);
-
           if (profile?.is_admin) {
-            console.log("Admin user confirmed, redirecting to dashboard");
             navigate("/", { replace: true });
           } else {
-            console.log("Non-admin user, showing error");
             await supabase.auth.signOut();
+            toast({
+              variant: "destructive",
+              title: "Access Denied",
+              description: "This dashboard is restricted to admin users only.",
+            });
           }
         } catch (error) {
           console.error("Error in auth state change handler:", error);
-          
-          if (error.message?.includes('refresh_token_not_found')) {
-            console.log("Refresh token not found in auth change, signing out");
-            await supabase.auth.signOut();
-            return;
-          }
-          
           toast({
             variant: "destructive",
             title: "Error",
             description: "An error occurred while processing your login.",
           });
         }
-      } else if (event === "SIGNED_OUT") {
-        console.log("User signed out");
-      } else if (event === "TOKEN_REFRESHED") {
-        console.log("Token refreshed successfully");
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isSubscribed = false;
+      subscription.unsubscribe();
+    };
   }, [navigate, toast]);
 
   return (
