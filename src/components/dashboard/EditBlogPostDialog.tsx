@@ -15,6 +15,13 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { RichTextEditor } from "./blog-form/RichTextEditor";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface BlogPostFormData {
   title: string;
@@ -23,6 +30,7 @@ interface BlogPostFormData {
   excerpt?: string;
   cover_image?: string;
   published_at?: string;
+  author_id?: string;
 }
 
 interface EditBlogPostDialogProps {
@@ -32,7 +40,7 @@ interface EditBlogPostDialogProps {
 }
 
 export const EditBlogPostDialog = ({ post, isNew, onClose }: EditBlogPostDialogProps) => {
-  const { refreshData } = useData();
+  const { refreshData, people } = useData();
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState<BlogPostFormData>({
     title: post?.title || "",
@@ -41,6 +49,7 @@ export const EditBlogPostDialog = ({ post, isNew, onClose }: EditBlogPostDialogP
     excerpt: post?.excerpt || "",
     cover_image: post?.cover_image || "",
     published_at: post?.published_at || "",
+    author_id: post?.author_id || "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -119,6 +128,25 @@ export const EditBlogPostDialog = ({ post, isNew, onClose }: EditBlogPostDialogP
                   className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors"
                 />
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-white">Author</Label>
+              <Select
+                value={formData.author_id}
+                onValueChange={(value) => setFormData({ ...formData, author_id: value })}
+              >
+                <SelectTrigger className="bg-dashboard-card border-white/10 focus:border-dashboard-accent/50 transition-colors">
+                  <SelectValue placeholder="Select an author" />
+                </SelectTrigger>
+                <SelectContent className="bg-dashboard-card border-white/10">
+                  {people.map((person) => (
+                    <SelectItem key={person.id} value={person.id} className="text-white">
+                      {person.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-2">

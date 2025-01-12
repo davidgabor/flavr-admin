@@ -77,6 +77,7 @@ export type Database = {
       }
       blog_posts: {
         Row: {
+          author_id: string | null
           content: string
           cover_image: string | null
           created_at: string
@@ -88,6 +89,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          author_id?: string | null
           content: string
           cover_image?: string | null
           created_at?: string
@@ -99,6 +101,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          author_id?: string | null
           content?: string
           cover_image?: string | null
           created_at?: string
@@ -109,7 +112,15 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "blog_posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       destinations: {
         Row: {
